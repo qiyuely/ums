@@ -3,4 +3,18 @@
   <groupId>com.qiyuely</groupId>
   <artifactId>ums</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  
+  <properties>
+  	<remex.version>0.0.1-SNAPSHOT</remex.version>
+  	<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
+  </properties>
+  
+  <dependencies>
+  	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+		<version>${spring.boot.version}</version>
+	</dependency>
+  
+  </dependencies>
 </project>

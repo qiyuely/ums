@@ -1,5 +1,7 @@
 package com.qiyue.ums;
 
+import org.springframework.boot.SpringApplication;
+
 /**
  * 启动类
  * 
@@ -13,6 +15,6 @@ public class Application {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println("==========");
+		SpringApplication.run(Application.class, args);
 	}
 }
