@@ -15,9 +15,5 @@
 		<artifactId>spring-boot-starter-web</artifactId>
 		<version>${spring.boot.version}</version>
 	</dependency>
-  
-  
-  
-  
   </dependencies>
 </project>
