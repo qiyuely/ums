@@ -1,4 +1,4 @@
-package com.qiyue.ums;
+package com.qiyuely.ums;
 
 import org.springframework.boot.SpringApplication;
 

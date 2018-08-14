@@ -1,4 +1,4 @@
-package com.qiyue.ums.service;
+package com.qiyuely.ums.service;
 
 /**
  * url管理service

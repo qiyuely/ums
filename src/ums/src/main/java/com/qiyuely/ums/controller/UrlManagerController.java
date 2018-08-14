@@ -1,4 +1,4 @@
-package com.qiyue.ums.controller;
+package com.qiyuely.ums.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  */
 @Controller
-@RequestMapping("/ums/")
+@RequestMapping("/")
 public class UrlManagerController {
 
 	/**
@@ -19,6 +19,6 @@ public class UrlManagerController {
 	@RequestMapping("/")
 	public String main() {
 		System.out.println("=======");
-		return "";
+		return "index";
 	}
 }

@@ -1,6 +1,6 @@
-package com.qiyue.ums.service.impl;
+package com.qiyuely.ums.service.impl;
 
-import com.qiyue.ums.service.UrlManagerService;
+import com.qiyuely.ums.service.UrlManagerService;
 
 /**
  * url管理service

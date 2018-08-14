@@ -1,4 +1,4 @@
-package com.qiyue.ums.dao;
+package com.qiyuely.ums.dao;
 
 /**
  * url管理dao
