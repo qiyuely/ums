@@ -1,6 +1,7 @@
 package com.qiyuely.ums;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * 启动类
@@ -8,6 +9,7 @@ import org.springframework.boot.SpringApplication;
  * @author Qiaoxin.Hong
  *
  */
+@SpringBootApplication
 public class Application {
 	
 	/**

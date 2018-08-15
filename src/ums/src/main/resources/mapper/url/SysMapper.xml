@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 系统管理 -->
+<mapper namespace="com.qiyuely.ums.dao.SysDao">
+	<!-- 初始化数据库 -->
+	<insert id="initDb">
+		<!-- url信息表 -->
+		create table if not exists t_url comment 'url信息表' (
+			id varchar(32) comment 'id' primary key,
+			url varchar(255) comment 'url',
+			remark varchar(500) comment '备注'
+		);
+	</insert>
+</mapper>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta charset="utf-8" />
+	<title>首页</title>
+
+	<meta name="description" content="This is page-header (.page-header &gt; h1)" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+	<link rel="stylesheet" href="/static/plugins/assets/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="/static/plugins/assets/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="/static/plugins/assets/css/ace.min.css" id="main-ace-style" />
+	<link rel="stylesheet" href="/static/plugins/assets/css/ace-skins.min.css" />
+	<link rel="stylesheet" href="/static/plugins/assets/css/ace-rtl.min.css" />
+</head>
+
+<body ng-app="mainApp" class="no-skin">
+	<div ng-controller="mainController">
+	
+		<!-- /section:basics/navbar.layout -->
+		<div class="main-container" id="main-container">
+	
+			<!-- #section:basics/sidebar -->
+			<div id="sidebar" class="sidebar responsive">
+	
+				<ul class="nav nav-list">
+					<li class="active">
+						<a ui-sref="urlView">
+							<i class="menu-icon fa fa-tachometer"></i>
+							<span class="menu-text"> 首  页 </span>
+						</a>
+	
+						<b class="arrow"></b>
+					</li>
+					
+					<li class="">
+						<a ui-sref="urlView">
+							<i class="menu-icon fa fa-list"></i>
+							URL列表
+						</a>
+					</li>
+					
+					<li class="">
+						<a ui-sref="urlTypeView">
+							<i class="menu-icon fa fa-pencil-square-o"></i>
+							URL类型
+						</a>
+					</li>
+					
+				</ul><!-- /.nav-list -->
+			</div>
+	
+			<div class="main-content">
+				<div ui-view>
+					
+				</div>
+			</div>
+	
+		</div><!-- /.main-container -->
+	</div>
+	
+	<script type="text/javascript">
+		window.jQuery || document.write("<script src='/static/plugins/assets/js/jquery.min.js'>"+"<"+"/script>");
+	</script>
+	<script type="text/javascript">
+		if('ontouchstart' in document.documentElement) document.write("<script src='/static/plugins/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+	</script>
+	<script src="/static/plugins/assets/js/bootstrap.min.js"></script>
+	<script src="/static/plugins/assets/js/jquery-ui.custom.min.js"></script>
+	<script src="/static/plugins/assets/js/jquery.ui.touch-punch.min.js"></script>
+	<script src="/static/plugins/assets/js/ace-elements.min.js"></script>
+	<script src="/static/plugins/assets/js/ace.min.js"></script>
+	
+	<script type="text/javascript" src="/static/plugins/angular/angular.js"></script>
+	<script type="text/javascript" src="/static/plugins/angular/angular-ui-router.js"></script>
+	
+	<script type="text/javascript" src="/static/js/common/common.js"></script>
+	
+	<!-- 系统的app，内定义驱动整个系统的全局变量 -->
+	<script type="text/javascript" src="/static/js/app.js"></script>
+	
+	<!-- 各功能点的js -->
+	<script type="text/javascript" src="/static/js/url/url.js"></script>
+	<script type="text/javascript" src="/static/js/url/urlType.js"></script>
+	
+	<!-- 各功能点的js End -->
+	
+	<script type="text/javascript" src="/static/js/main.js"></script>
+
+</body>
+</html>
