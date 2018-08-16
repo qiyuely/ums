@@ -11,6 +11,12 @@
   
   <dependencies>
   	<dependency>
+  		<groupId>com.qiyuely</groupId>
+  		<artifactId>remex-core</artifactId>
+  		<version>${remex.version}</version>
+  	</dependency>
+  	
+  	<dependency>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-web</artifactId>
 		<version>${spring.boot.version}</version>

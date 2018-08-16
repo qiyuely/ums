@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- url类型管理 -->
+<mapper namespace="com.qiyuely.ums.dao.UrlTypeDao">
+	<resultMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlTypeEntity"/>
+	<parameterMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlTypeEntity"/>
+	
+	<!-- 表所有字段 -->
+	<sql id="allColumns">
+		id, name, parent_id
+	</sql>
+	
+	<!-- 插入 -->
+	<insert id="insert" parameterMap="BaseMap">
+		insert into t_url_type (<include refid="allColumns"/>
+		) values (
+			#{id},
+            #{name},
+            #{parentId}
+		)
+	</insert>
+	
+	<!-- 查询列表 -->
+	<select id="queryList" resultMap="BaseMap">
+		select <include refid="allColumns"/> from t_url_type
+	</select>
+</mapper>

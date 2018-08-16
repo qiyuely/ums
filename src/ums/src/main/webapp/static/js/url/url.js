@@ -17,7 +17,6 @@ mainStates["urlView"] = {
 				params : {}
 			}).then(function(result) {
 				$scope.dataList = result.data.data;
-				console.log($scope.dataList)
 			});
 		}
 		//默认查询一次

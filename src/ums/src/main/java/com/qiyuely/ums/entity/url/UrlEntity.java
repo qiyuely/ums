@@ -14,7 +14,7 @@ public class UrlEntity {
 	/** url */
 	private String url;
 	
-	/** remark */
+	/** 备注 */
 	private String remark;
 	
 	public void setId(String id) {

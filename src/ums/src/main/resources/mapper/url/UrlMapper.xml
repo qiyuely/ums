@@ -3,8 +3,8 @@
 
 <!-- url管理 -->
 <mapper namespace="com.qiyuely.ums.dao.UrlManagerDao">
-	<resultMap id="UrlEntity" type="com.qiyuely.ums.entity.url.UrlEntity"/>
-	<parameterMap id="UrlEntity" type="com.qiyuely.ums.entity.url.UrlEntity"/>
+	<resultMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlEntity"/>
+	<parameterMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlEntity"/>
 	
 	<!-- 表所有字段 -->
 	<sql id="allColumns">
@@ -12,7 +12,7 @@
 	</sql>
 	
 	<!-- 插入 -->
-	<insert id="insert" parameterMap="UrlEntity">
+	<insert id="insert" parameterMap="BaseMap">
 		insert into t_url (<include refid="allColumns"/>
 		) values (
 			#{id},
@@ -22,7 +22,7 @@
 	</insert>
 	
 	<!-- 查询列表 -->
-	<select id="queryList" resultMap="UrlEntity" parameterType="com.qiyuely.ums.req.url.UrlQueryReq">
+	<select id="queryList" resultMap="BaseMap" parameterType="com.qiyuely.ums.req.url.UrlQueryReq">
 		select <include refid="allColumns"/> from t_url
 	</select>
 </mapper>
