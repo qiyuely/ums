@@ -28,19 +28,19 @@
 										<div class="dd-handle">
 											{{data.name}}
 											<div class="pull-right action-buttons">
-												<a class="blue" ng-click="toAdd(data)" href="#">
+												<a ng-click="toAdd(data)" class="blue" href="#">
 													<i class="ace-icon fa fa-plus-square bigger-130"></i>
 												</a>
-												<a class="blue" ng-click="toUpdate(data)" href="#">
+												<a ng-click="toUpdate(data)" ng-if="isAllowUpdate(data)" class="blue" href="#">
 													<i class="ace-icon fa fa-pencil bigger-130"></i>
 												</a>
-												<a class="red" href="#">
+												<a ng-click="del($index, parentData)" ng-if="isAllowDel(data)" class="red" href="#">
 													<i class="ace-icon fa fa-trash-o bigger-130"></i>
 												</a>
 											</div>
 										</div>
 										
-										<ol class="dd-list" ng-repeat="data in data.childList" ng-include="'urlTypeRecursion'">
+										<ol class="dd-list" ng-init="parentData=data; data=childData" ng-repeat="childData in data.childList" ng-include="'urlTypeRecursion'">
 										</ol>
 									</li>
 								</script> 
@@ -86,9 +86,52 @@
 						</form>
 					</div>
 				</div>
+				
+				<div class="modal-footer no-margin-top">
+					<button ng-click="save()" class="btn btn-white btn-info btn-bold pull-left">
+						<i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
+						保 存
+					</button>
+					<button class="btn btn-white btn-pink btn-round pull-left" data-dismiss="modal">
+						<i class="ace-icon fa fa-times red2"></i>
+						关 闭
+					</button>
+				</div>
+				
 			</div>
 		</div>
 		
 	</div>
+	
+	<script type="text/javascript">
+			window.jQuery || document.write("<script src='/static/plugins/assets/js/jquery.min.js'>"+"<"+"/script>");
+		</script>
+		<!-- <![endif]-->
+
+		<!--[if IE]>
+		<script type="text/javascript">
+		 window.jQuery || document.write("<script src='/static/plugins/assets/js/jquery1x.min.js'>"+"<"+"/script>");
+		</script>
+		<![endif]-->
+		<script type="text/javascript">
+			if('ontouchstart' in document.documentElement) document.write("<script src='/static/plugins/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+		</script>
+	<script src="/static/plugins/assets/js/bootstrap.min.js"></script>
+	<script src="/static/plugins/assets/js/jquery.nestable.min.js"></script>
+	<script src="/static/plugins/assets/js/ace-elements.min.js"></script>
+	<script src="/static/plugins/assets/js/ace.min.js"></script>
+	<script type="text/javascript">
+		jQuery(function($){
+			
+			/* $('.dd').nestable(); */
+		
+			/* $('.dd-handle a').on('mousedown', function(e){
+				e.stopPropagation();
+			});
+			
+			$('[data-rel="tooltip"]').tooltip(); */
+		
+		});
+	</script>
 </body>
 </html>

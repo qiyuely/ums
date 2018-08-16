@@ -14,6 +14,8 @@ import com.qiyuely.ums.entity.url.UrlTypeEntity;
 import com.qiyuely.ums.framework.BaseService;
 import com.qiyuely.ums.framework.result.Result;
 import com.qiyuely.ums.req.url.UrlTypeCreateReq;
+import com.qiyuely.ums.req.url.UrlTypeDeleteReq;
+import com.qiyuely.ums.req.url.UrlTypeUpdateReq;
 import com.qiyuely.ums.service.UrlTypeService;
 import com.qiyuely.ums.utils.IdUtil;
 
@@ -67,7 +69,7 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	 * @return
 	 */
 	@Override
-	public Result<Void> createUrlType(UrlTypeCreateReq req) {
+	public Result<UrlTypeDto> createUrlType(UrlTypeCreateReq req) {
 		UrlTypeEntity entity = new UrlTypeEntity();
 		entity.setId(IdUtil.createId());
 		entity.setName(req.getName());
@@ -75,10 +77,38 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 		
 		urlTypeDao.insert(entity);
 		
+		UrlTypeDto dto = new UrlTypeDto();
+		fillCreate(dto, entity);
+		
+		return packResult(dto);
+	}
+	
+	/**
+	 * 修改url类型
+	 * @param entity
+	 * @return
+	 */
+	@Override
+	public Result<Void> updateUrlType(UrlTypeUpdateReq req) {
+		UrlTypeEntity entity = new UrlTypeEntity();
+		entity.setId(req.getId());
+		entity.setName(req.getName());
+		
+		urlTypeDao.update(entity);
+		
 		return packResult();
 	}
 	
-	
+	/**
+	 * 删除url类型
+	 * @param entity
+	 * @return
+	 */
+	@Override
+	public Result<Void> deleteUrlType(UrlTypeDeleteReq req) {
+		urlTypeDao.delete(req.getId());
+		return packResult();
+	}
 	
 	
 	

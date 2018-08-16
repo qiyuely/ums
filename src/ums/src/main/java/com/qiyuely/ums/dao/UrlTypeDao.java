@@ -24,4 +24,18 @@ public interface UrlTypeDao {
 	 * @return
 	 */
 	List<UrlTypeEntity> queryList();
+	
+	/**
+	 * 修改
+	 * @param entity
+	 * @return
+	 */
+	int update(UrlTypeEntity entity);
+	
+	/**
+	 * 删除
+	 * @param id
+	 * @return
+	 */
+	int delete(String id);
 }

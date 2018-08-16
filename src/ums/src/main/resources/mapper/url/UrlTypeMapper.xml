@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <!-- url类型管理 -->
 <mapper namespace="com.qiyuely.ums.dao.UrlTypeDao">
@@ -11,6 +11,11 @@
 		id, name, parent_id
 	</sql>
 	
+	<!-- 查询列表 -->
+	<select id="queryList" resultMap="BaseMap">
+		select <include refid="allColumns"/> from t_url_type
+	</select>
+	
 	<!-- 插入 -->
 	<insert id="insert" parameterMap="BaseMap">
 		insert into t_url_type (<include refid="allColumns"/>
@@ -21,8 +26,22 @@
 		)
 	</insert>
 	
-	<!-- 查询列表 -->
-	<select id="queryList" resultMap="BaseMap">
-		select <include refid="allColumns"/> from t_url_type
-	</select>
+	<!-- 修改 -->
+	<update id="update">
+		update t_url_type
+		<set>
+			<if test="name != null">
+	        	name = #{name},
+	      	</if>
+	      	<if test="parentId != null">
+	        	parent_id = #{parentId},
+	      	</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="delete">
+		delete from t_url_type where id = #{id}
+	</delete>
 </mapper>

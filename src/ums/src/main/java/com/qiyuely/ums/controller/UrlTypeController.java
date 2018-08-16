@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.qiyuely.ums.dto.url.UrlTypeDto;
 import com.qiyuely.ums.framework.result.Result;
 import com.qiyuely.ums.req.url.UrlTypeCreateReq;
+import com.qiyuely.ums.req.url.UrlTypeDeleteReq;
+import com.qiyuely.ums.req.url.UrlTypeUpdateReq;
 import com.qiyuely.ums.service.UrlTypeService;
 
 /**
@@ -51,7 +53,29 @@ public class UrlTypeController {
 	 */
 	@ResponseBody
 	@RequestMapping("createUrlType")
-	public Result<Void> createUrlType(UrlTypeCreateReq req) {
+	public Result<UrlTypeDto> createUrlType(UrlTypeCreateReq req) {
 		return urlTypeService.createUrlType(req);
+	}
+	
+	/**
+	 * 修改url类型
+	 * @param entity
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("updateUrlType")
+	public Result<Void> updateUrlType(UrlTypeUpdateReq req) {
+		return urlTypeService.updateUrlType(req);
+	}
+	
+	/**
+	 * 删除url类型
+	 * @param entity
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping("deleteUrlType")
+	public Result<Void> deleteUrlType(UrlTypeDeleteReq req) {
+		return urlTypeService.deleteUrlType(req);
 	}
 }
