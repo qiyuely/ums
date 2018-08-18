@@ -24,7 +24,8 @@ mainStates["urlTypeView"] = {
 			}).then(function(result) {
 				var curDataList = result.data.data || [];
 				
-				for (var data in curDataList) {
+				for (var i = 0; i < curDataList.length; i++) {
+					var data = curDataList[i];
 					data.parentName = "根节点";
 				}
 				
@@ -33,12 +34,32 @@ mainStates["urlTypeView"] = {
 					"childList" : curDataList
 				}
 				$scope.dataList = [rootElem];
+				
+				//初始化节点展开标识
+				$scope.initExpandStatus($scope.dataList);
 			});
 		}
 		//默认查询一次
 		$scope.search();
 		
-		$('.dd').nestable();
+		/**
+		 * 初始化节点展开标识
+		 */
+		$scope.initExpandStatus = function(dataList) {
+			if (isNotEmpty(dataList)) {
+				for (var i = 0; i < dataList.length; i++) {
+					var data = dataList[i];
+					var childDataList = data.childList;
+					
+					data.expandStatus = 1;
+					
+					//子节点列表
+					if (isNotEmpty(childDataList)) {
+						$scope.initExpandStatus(childDataList)
+					}
+				}
+			}
+		}
 		
 		/**
 		 * 打开新增界面
@@ -84,16 +105,25 @@ mainStates["urlTypeView"] = {
 		 * 新增
 		 */
 		$scope.add = function() {
+			//数据验证
+			if (!$scope.validateEdit()) {
+				return;
+			}
+			
 			$http({
 				url : "/url/type/createUrlType",
 				method : "post",
 				params : $scope.editData
 			}).then(function(result) {
-				var data = result.data.data;
-				$scope.editParentData.childList.push(data);
-				
-				rmsg("创建成功！");
-				$('#editPanel').modal('hide');
+				if (httpSuccess(result)) {
+					var data = result.data.data;
+					$scope.editParentData.childList.push(data);
+					
+					rmsg("创建成功！");
+					$('#editPanel').modal('hide');
+				} else {
+					writeHttpErrorMsg(result);
+				}
 			});
 		}
 		
@@ -101,13 +131,24 @@ mainStates["urlTypeView"] = {
 		 * 修改
 		 */
 		$scope.update = function() {
-			$http({
-				url : "/url/type/updateUrlType",
-				method : "post",
-				params : $scope.editData
-			}).then(function(result) {
-				rmsg("修改成功！");
-				$('#editPanel').modal('hide');
+			//数据验证
+			if (!$scope.validateEdit()) {
+				return;
+			}
+			
+			cfMsg("是否进行修改？", function() {
+				$http({
+					url : "/url/type/updateUrlType",
+					method : "post",
+					params : $scope.editData
+				}).then(function(result) {
+					if (httpSuccess(result)) {
+						rmsg("修改成功！");
+						$('#editPanel').modal('hide');
+					} else {
+						writeHttpErrorMsg(result);
+					}
+				});
 			});
 		}
 		
@@ -117,14 +158,20 @@ mainStates["urlTypeView"] = {
 		$scope.del = function(dataIndex, parentData) {
 			var data = parentData.childList[dataIndex];
 			
-			$http({
-				url : "/url/type/deleteUrlType",
-				method : "post",
-				params : {id : data.id}
-			}).then(function(result) {
-				parentData.childList.splice(dataIndex, 1);
-				rmsg("删除成功！");
-			});
+			cfMsg("是否删除该节点？", function() {
+				$http({
+					url : "/url/type/deleteUrlType",
+					method : "post",
+					params : {id : data.id}
+				}).then(function(result) {
+					if (httpSuccess(result)) {
+						parentData.childList.splice(dataIndex, 1);
+						rmsg("删除成功！");
+					} else {
+						writeHttpErrorMsg(result);
+					}
+				});
+			})
 		}
 		
 		/**
@@ -143,6 +190,19 @@ mainStates["urlTypeView"] = {
 			if (!data) return false;
 			if (data.id == null || data.id == '') return false;
 			if (data.childList != null && data.childList.length != 0) return false;
+			return true;
+		}
+		
+		/**
+		 * 验证编辑的数据
+		 */
+		$scope.validateEdit = function() {
+			var data = $scope.editData;
+			if (isEmpty(data.name)) {
+				fmsg("节点名称不能为空");
+				return false;
+			}
+			
 			return true;
 		}
 	}

@@ -38,4 +38,11 @@ public interface UrlTypeDao {
 	 * @return
 	 */
 	int delete(String id);
+	
+	/**
+	 * 根据名字查询url类型
+	 * @param name
+	 * @return
+	 */
+	UrlTypeEntity findByName(String name);
 }

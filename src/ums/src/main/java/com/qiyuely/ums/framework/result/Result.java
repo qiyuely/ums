@@ -37,15 +37,6 @@ public class Result<T> implements Serializable {
 	}
 
 	/**
-	 * 创建默认失败的结果集
-	 * @param msg
-	 */
-	public Result(String msg) {
-		this.key = ResultKey.FAILED;
-		this.msg = msg;
-	}
-
-	/**
 	 * 创建结果集
 	 * @param key
 	 * @param msg

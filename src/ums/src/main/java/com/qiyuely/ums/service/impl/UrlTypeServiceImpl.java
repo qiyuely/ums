@@ -36,11 +36,6 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	 */
 	@Override
 	public Result<List<UrlTypeDto>> queryUrlTypeInfo() {
-//		UrlTypeCreateReq createReq = new UrlTypeCreateReq();
-//		createReq.setParentId("61a26a5b0ecd4b0486dca0201062c7fa");
-//		createReq.setName("节点2");
-//		createUrlType(createReq);
-		
 		List<UrlTypeEntity> list = urlTypeDao.queryList();
 		
 		List<UrlTypeDto> dtoList = new ArrayList<>();
@@ -70,16 +65,21 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	 */
 	@Override
 	public Result<UrlTypeDto> createUrlType(UrlTypeCreateReq req) {
+		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
+		if (entityByName != null) {
+			return errorResult("该父节点下已存在同名的节点");
+		}
+		
 		UrlTypeEntity entity = new UrlTypeEntity();
 		entity.setId(IdUtil.createId());
 		entity.setName(req.getName());
 		entity.setParentId(req.getParentId());
 		
+		
 		urlTypeDao.insert(entity);
 		
 		UrlTypeDto dto = new UrlTypeDto();
 		fillCreate(dto, entity);
-		
 		return packResult(dto);
 	}
 	
@@ -90,6 +90,11 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	 */
 	@Override
 	public Result<Void> updateUrlType(UrlTypeUpdateReq req) {
+		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
+		if (entityByName != null && !req.getId().equals(entityByName.getId())) {
+			return errorResult("该父节点下已存在同名的节点");
+		}
+		
 		UrlTypeEntity entity = new UrlTypeEntity();
 		entity.setId(req.getId());
 		entity.setName(req.getName());

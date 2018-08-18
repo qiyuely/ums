@@ -24,7 +24,9 @@
 							<div class="dd" id="nestable">
 								
 								<script id="urlTypeRecursion" type="text/ng-template">
-									<li class="dd-item">
+									<li class="dd-item {{data.childList.length != 0 && data.expandStatus == 1 ? '' : 'dd-collapsed'}}">
+										<button ng-click="data.expandStatus = 0" ng-show="data.childList.length != 0 && data.expandStatus == 1" data-action="collapse" type="button">Collapse</button>
+										<button ng-click="data.expandStatus = 1" ng-show="data.childList.length != 0 && data.expandStatus == 0" data-action="expand" type="button">Expand</button>
 										<div class="dd-handle">
 											{{data.name}}
 											<div class="pull-right action-buttons">
@@ -103,35 +105,5 @@
 		
 	</div>
 	
-	<script type="text/javascript">
-			window.jQuery || document.write("<script src='/static/plugins/assets/js/jquery.min.js'>"+"<"+"/script>");
-		</script>
-		<!-- <![endif]-->
-
-		<!--[if IE]>
-		<script type="text/javascript">
-		 window.jQuery || document.write("<script src='/static/plugins/assets/js/jquery1x.min.js'>"+"<"+"/script>");
-		</script>
-		<![endif]-->
-		<script type="text/javascript">
-			if('ontouchstart' in document.documentElement) document.write("<script src='/static/plugins/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
-		</script>
-	<script src="/static/plugins/assets/js/bootstrap.min.js"></script>
-	<script src="/static/plugins/assets/js/jquery.nestable.min.js"></script>
-	<script src="/static/plugins/assets/js/ace-elements.min.js"></script>
-	<script src="/static/plugins/assets/js/ace.min.js"></script>
-	<script type="text/javascript">
-		jQuery(function($){
-			
-			/* $('.dd').nestable(); */
-		
-			/* $('.dd-handle a').on('mousedown', function(e){
-				e.stopPropagation();
-			});
-			
-			$('[data-rel="tooltip"]').tooltip(); */
-		
-		});
-	</script>
 </body>
 </html>
