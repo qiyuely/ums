@@ -25,4 +25,23 @@
 	<select id="queryList" resultMap="BaseMap" parameterType="com.qiyuely.ums.req.url.UrlQueryReq">
 		select <include refid="allColumns"/> from t_url
 	</select>
+	
+	<!-- 修改 -->
+	<update id="update" parameterMap="BaseMap">
+		update t_url
+		<set>
+			<if test="url != null">
+	        	url = #{url},
+	      	</if>
+	      	<if test="remark != null">
+	        	remark = #{remark},
+	      	</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="delete">
+		delete from t_url where id = #{id}
+	</delete>
 </mapper>

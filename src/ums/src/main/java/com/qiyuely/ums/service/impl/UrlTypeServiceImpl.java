@@ -75,7 +75,6 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 		entity.setName(req.getName());
 		entity.setParentId(req.getParentId());
 		
-		
 		urlTypeDao.insert(entity);
 		
 		UrlTypeDto dto = new UrlTypeDto();

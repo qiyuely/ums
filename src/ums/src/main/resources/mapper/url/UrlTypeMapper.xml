@@ -27,7 +27,7 @@
 	</insert>
 	
 	<!-- 修改 -->
-	<update id="update">
+	<update id="update" parameterMap="BaseMap">
 		update t_url_type
 		<set>
 			<if test="name != null">

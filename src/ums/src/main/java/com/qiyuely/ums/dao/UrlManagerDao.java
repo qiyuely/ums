@@ -26,4 +26,18 @@ public interface UrlManagerDao {
 	 * @return
 	 */
 	int insert(UrlEntity entity); 
+	
+	/**
+	 * 插入
+	 * @param entity
+	 * @return
+	 */
+	int update(UrlEntity entity);
+	
+	/**
+	 * 删除
+	 * @param id
+	 * @return
+	 */
+	int delete(String id);
 }
