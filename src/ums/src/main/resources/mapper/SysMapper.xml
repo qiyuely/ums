@@ -18,5 +18,11 @@
 			name varchar(50) comment '类型名称',
 			parent_id varchar(32) comment '父编号'
 		);
+		
+		<!-- url类型关系表 -->
+		create table if not exists t_url_type_rel comment 'url类型关系表' (
+			url_id varchar(32) comment 'url id',
+			url_type_id varchar(32) comment 'url类型id'
+		);
 	</insert>
 </mapper>

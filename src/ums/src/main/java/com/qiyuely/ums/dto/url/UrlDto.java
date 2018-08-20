@@ -1,6 +1,7 @@
 package com.qiyuely.ums.dto.url;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * url业务实体
@@ -18,6 +19,9 @@ public class UrlDto implements Serializable {
 	
 	/** 备注 */
 	private String remark;
+	
+	/** url类型编号列表 */
+	private List<String> typeIdList;
 	
 	public void setUrl(String url) {
 		this.url = url;
@@ -45,5 +49,13 @@ public class UrlDto implements Serializable {
 	
 	public String getId() {
 		return id;
+	}
+	
+	public void setTypeIdList(List<String> typeIdList) {
+		this.typeIdList = typeIdList;
+	}
+	
+	public List<String> getTypeIdList() {
+		return typeIdList;
 	}
 }

@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qiyuely.remex.utils.CollectionUtils;
+import com.qiyuely.remex.utils.StringUtils;
 import com.qiyuely.ums.dao.UrlManagerDao;
+import com.qiyuely.ums.dao.UrlTypeRelDao;
 import com.qiyuely.ums.dto.url.UrlDto;
 import com.qiyuely.ums.entity.url.UrlEntity;
+import com.qiyuely.ums.entity.url.UrlTypeRelEntity;
 import com.qiyuely.ums.framework.BaseService;
 import com.qiyuely.ums.framework.result.Result;
 import com.qiyuely.ums.req.url.UrlCreateReq;
@@ -30,6 +33,9 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	
 	@Autowired
 	private UrlManagerDao urlManagerDao;
+	
+	@Autowired
+	private UrlTypeRelDao urlTypeRelDao;
 
 	/**
 	 * 查询列表
@@ -44,6 +50,11 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 			for (UrlEntity entity : list) {
 				UrlDto dto = new UrlDto();
 				fillCreate(dto, entity);
+				
+				//查询url类型id列表
+				List<String> typeIdList = urlTypeRelDao.queryUrlTypeIdListByUrlId(entity.getId());
+				dto.setTypeIdList(typeIdList);;
+				
 				dtoList.add(dto);
 			}
 		}
@@ -64,8 +75,22 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 		
 		urlManagerDao.insert(entity);
 		
+		//保存url类型关系信息
+		if (CollectionUtils.isNotEmpty(req.getTypeIdList())) {
+			for (String urlTypeId : req.getTypeIdList()) {
+				if (StringUtils.isBlank(urlTypeId)) {
+					continue;
+				}
+				UrlTypeRelEntity urlTypeRelEntity = new UrlTypeRelEntity();
+				urlTypeRelEntity.setUrlId(entity.getId());
+				urlTypeRelEntity.setUrlTypeId(urlTypeId);
+				urlTypeRelDao.insert(urlTypeRelEntity);
+			}
+		}
+		
 		UrlDto dto = new UrlDto();
 		fillCreate(dto, entity);
+		dto.setTypeIdList(req.getTypeIdList());
 		return packResult(dto);
 	}
 
@@ -81,6 +106,22 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 		
 		urlManagerDao.update(entity);
 		
+		//删除此url的所有url类型关系信息
+		urlTypeRelDao.deleteByUrlId(req.getId());
+		
+		//保存url类型关系信息
+		if (CollectionUtils.isNotEmpty(req.getTypeIdList())) {
+			for (String urlTypeId : req.getTypeIdList()) {
+				if (StringUtils.isBlank(urlTypeId)) {
+					continue;
+				}
+				UrlTypeRelEntity urlTypeRelEntity = new UrlTypeRelEntity();
+				urlTypeRelEntity.setUrlId(entity.getId());
+				urlTypeRelEntity.setUrlTypeId(urlTypeId);
+				urlTypeRelDao.insert(urlTypeRelEntity);
+			}
+		}
+		
 		return packResult();
 	}
 
@@ -92,6 +133,10 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	@Override
 	public Result<Void> deleteUrl(UrlDeleteReq req) {
 		urlManagerDao.delete(req.getId());
+		
+		//删除此url的所有url类型关系信息
+		urlTypeRelDao.deleteByUrlId(req.getId());
+				
 		return packResult();
 	}
 	
