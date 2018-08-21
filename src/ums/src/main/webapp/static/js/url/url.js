@@ -10,7 +10,8 @@ mainStates["urlView"] = {
 		$scope.editType = "0";
 		//编辑的数据
 		$scope.editData = {};
-		$scope.typeTemp = 0;
+		//是否展示url类型模板区域，0：否；1：是
+		$scope.isTypeTempShowArea = 1;
 		
 		//url类型数据列表
 		$scope.typeDataList = {};
@@ -107,6 +108,7 @@ mainStates["urlView"] = {
 		 * 打开新增界面
 		 */
 		$scope.toAdd = function(data) {
+			console.log($scope.isTypeTempShowArea);
 			$scope.editType = "0";
 			
 			//重置

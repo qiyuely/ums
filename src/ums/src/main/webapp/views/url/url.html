@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+<style type="text/css">
+.type-temp-btns .btn {
+	margin-bottom: 4px;
+}
+
+</style>
+
 </head>
 <body>
 	<div class="breadcrumbs" id="breadcrumbs">
@@ -32,21 +40,15 @@
 							<div class="tab-content no-border padding-24" style="padding : 24px 0px;">
 								<div id="home" class="tab-pane in active">
 									
-									<div>
-										<div class="inline">
-											<div class="tags" style="width: 100%; border: 0px;">
-												<span class="tag" style="padding: 6px 30px 6px 13px; font-size: 14px;">
-													节点
-													<button  type="button" class="close">×</button>
-												</span>	
-											</div>
-										</div>
+									<div ng-show="isTypeTempShowArea == 1" class="type-temp-btns">
+										<button class="btn btn-primary btn-sm">蓝色按钮蓝色按钮</button>
+										<button class="btn btn-grey btn-sm">灰色按钮蓝色按钮</button>
 										
 										<h3 class="row header smaller lighter grey"></h3>
 									</div>
 									
 									
-									<label class="pull-right inline">
+									<label ng-click="isTypeTempShowArea = 0" class="pull-right inline">
 										<small class="muted smaller-90">类型列表：</small>
 										<input id="id-button-borders" checked="" type="checkbox" class="ace ace-switch ace-switch-5" />
 										<span class="lbl middle"></span>
