@@ -10,6 +10,7 @@ mainStates["urlView"] = {
 		$scope.editType = "0";
 		//编辑的数据
 		$scope.editData = {};
+		$scope.typeTemp = 0;
 		
 		//url类型数据列表
 		$scope.typeDataList = {};
@@ -155,7 +156,10 @@ mainStates["urlView"] = {
 				params : editReq
 			}).then(function(result) {
 				if (httpSuccess(result)) {
-					var data = result.data.data;
+					var callData = result.data.data;
+					var data = $scope.editData;
+					data.id = callData.id;
+					
 					$scope.dataList.push(data);
 					
 					rmsg("创建成功！");
@@ -201,11 +205,11 @@ mainStates["urlView"] = {
 			var editData = $scope.editData;
 			
 			//url类型id
-			var typeIdList = [];
+			var typeIdList = new Array();
 			if (isNotEmpty(editData.typeList)) {
 				for (var i = 0; i < editData.typeList.length; i++) {
 					var typeItem = editData.typeList[i];
-					typeIdList = typeItem.id;
+					typeIdList.push(typeItem.id);
 				}
 			}
 			
@@ -282,7 +286,6 @@ mainStates["urlView"] = {
 			
 			//最终不存在，则新增
 			editData.typeList.push(typeData);
-			console.log();
 		}
 		
 		/**

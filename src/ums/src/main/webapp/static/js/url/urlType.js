@@ -117,6 +117,14 @@ mainStates["urlTypeView"] = {
 			}).then(function(result) {
 				if (httpSuccess(result)) {
 					var data = result.data.data;
+					//新节点的展开标识为0关闭
+					data.expandStatus = 0;
+					
+					//如果此父节点为第一次添加了子节点，则将其展开标识置为1展开
+					if (isEmpty($scope.editParentData.childList)) {
+						$scope.editParentData.expandStatus = 1;
+					}
+					
 					$scope.editParentData.childList.push(data);
 					
 					rmsg("创建成功！");
