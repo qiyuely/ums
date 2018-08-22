@@ -108,7 +108,6 @@ mainStates["urlView"] = {
 		 * 打开新增界面
 		 */
 		$scope.toAdd = function(data) {
-			console.log($scope.isTypeTempShowArea);
 			$scope.editType = "0";
 			
 			//重置
@@ -314,6 +313,24 @@ mainStates["urlView"] = {
 		 */
 		$scope.typeRemoveSelectLi = function(typeDataIndex) {
 			$scope.editData.typeList.splice(typeDataIndex, 1);
+		}
+		
+		/**
+		 * 展示或关闭url类型模板区域
+		 */
+		$scope.showTypeTempArea = function() {
+			if ($scope.isTypeTempShowArea == 1) {
+				$scope.isTypeTempShowArea = 0;
+			} else {
+				$scope.isTypeTempShowArea = 1;
+			}
+		}
+		
+		/**
+		 * 打开url类型模板的rul类型选择界面
+		 */
+		$scope.toTypeTempSelectType = function() {
+			urlTypeSelectModule.show($scope, $http);
 		}
 	}
 }

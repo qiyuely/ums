@@ -28,7 +28,7 @@ public class UrlTypeController {
 	private UrlTypeService urlTypeService;
 
 	/**
-	 * 到url视图界面
+	 * 到url类型视图界面
 	 * @return
 	 */
 	@RequestMapping("toView")
