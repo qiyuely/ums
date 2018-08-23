@@ -12,9 +12,15 @@ mainStates["urlView"] = {
 		$scope.editData = {};
 		//是否展示url类型模板区域，0：否；1：是
 		$scope.isTypeTempShowArea = 1;
-		
 		//url类型数据列表
 		$scope.typeDataList = {};
+		//类型模板已选择的类型数据列表
+		$scope.typeTempSelectTypeDataList = new Array();
+		
+		
+		
+		//构建url类型选择组件
+		urlTypeSelectModule.build($scope, $http);
 		
 		/**
 		 * 查询url类型
@@ -27,9 +33,6 @@ mainStates["urlView"] = {
 			}).then(function(result) {
 				var curDataList = result.data.data || [];
 				$scope.typeDataList = curDataList;
-				
-				//初始化节点展开标识
-				$scope.initExpandStatus($scope.typeDataList);
 				
 				//查询url信息列表
 				$scope.search();
@@ -80,25 +83,6 @@ mainStates["urlView"] = {
 						if (typeId == typeData.id) {
 							data.typeList.push(typeData);
 						}
-					}
-				}
-			}
-		}
-		
-		/**
-		 * 初始化节点展开标识
-		 */
-		$scope.initExpandStatus = function(dataList) {
-			if (isNotEmpty(dataList)) {
-				for (var i = 0; i < dataList.length; i++) {
-					var data = dataList[i];
-					var childDataList = data.childList;
-					
-					data.expandStatus = 1;
-					
-					//子节点列表
-					if (isNotEmpty(childDataList)) {
-						$scope.initExpandStatus(childDataList)
 					}
 				}
 			}
@@ -260,52 +244,56 @@ mainStates["urlView"] = {
 		}
 		
 		/**
-		 * 打开url类型选择界面
+		 * 编辑url打开url类型选择界面
 		 */
-		$scope.toTypeSelect = function() {
-			$('#typeSelectPanel').modal("show");
-		}
-		
-		/**
-		 * url类型选择
-		 */
-		$scope.typeSelectLi = function(typeData) {
-			var editData = $scope.editData;
-			
-			if (isEmpty(editData.typeList)) {
-				editData.typeList = [];
-			}
-			
-			for (var i = 0; i < editData.typeList.length; i++) {
-				var typeItem = editData.typeList[i];
-				//已经存在则去除选择
-				if (typeItem.id == typeData.id) {
-					editData.typeList.splice(i, 1);
-					return;
-				}
-			}
-			
-			//最终不存在，则新增
-			editData.typeList.push(typeData);
-		}
-		
-		/**
-		 * url类型是否已被选择
-		 */
-		$scope.isTypeSelectedLi = function(typeData) {
-			var editData = $scope.editData;
-			
-			if (isNotEmpty(editData.typeList)) {
-				for (var i = 0; i < editData.typeList.length; i++) {
-					var typeItem = editData.typeList[i];
-					//存在该类型
-					if (typeItem.id == typeData.id) {
-						return true;
+		$scope.editUrlToTypeSelect = function() {
+			//url类型选择回调函数集
+			var urlTypeSelectModuleCallbackMap = {
+				
+				/**
+				 * url类型选择回调函数
+				 */
+				typeSelectLi : function(typeData) {
+					var editData = $scope.editData;
+					
+					if (isEmpty(editData.typeList)) {
+						editData.typeList = [];
 					}
+					
+					for (var i = 0; i < editData.typeList.length; i++) {
+						var typeItem = editData.typeList[i];
+						//已经存在则去除选择
+						if (typeItem.id == typeData.id) {
+							editData.typeList.splice(i, 1);
+							return;
+						}
+					}
+					
+					//最终不存在，则新增
+					editData.typeList.push(typeData);
+				},
+				
+				/**
+				 * url类型是否已被选择
+				 */
+				isTypeSelectedLi : function(typeData) {
+					var editData = $scope.editData;
+					
+					if (isNotEmpty(editData.typeList)) {
+						for (var i = 0; i < editData.typeList.length; i++) {
+							var typeItem = editData.typeList[i];
+							//存在该类型
+							if (typeItem.id == typeData.id) {
+								return true;
+							}
+						}
+					}
+					
+					return false;
 				}
 			}
 			
-			return false;
+			$scope.urlTypeSelectModule.toTypeSelect(urlTypeSelectModuleCallbackMap, "1");
 		}
 		
 		/**
@@ -327,10 +315,67 @@ mainStates["urlView"] = {
 		}
 		
 		/**
-		 * 打开url类型模板的rul类型选择界面
+		 * 类型模板类型选择打开url类型选择界面
 		 */
-		$scope.toTypeTempSelectType = function() {
-			urlTypeSelectModule.show($scope, $http);
+		$scope.typeTempToTypeSelect = function() {
+			//url类型选择回调函数集
+			var urlTypeSelectModuleCallbackMap = {
+				
+				/**
+				 * url类型选择回调函数
+				 */
+				typeSelectLi : function(typeData) {
+					var typeTempSelectTypeDataList = $scope.typeTempSelectTypeDataList;
+					
+					for (var i = 0; i < typeTempSelectTypeDataList.length; i++) {
+						var typeItem = typeTempSelectTypeDataList[i];
+						//已经存在则去除选择
+						if (typeItem.id == typeData.id) {
+							typeTempSelectTypeDataList.splice(i, 1);
+							return;
+						}
+					}
+					
+					//最终不存在，则新增
+					typeData.enabled = 1;
+					typeTempSelectTypeDataList.push(typeData);
+				},
+				
+				/**
+				 * url类型是否已被选择
+				 */
+				isTypeSelectedLi : function(typeData) {
+					var typeTempSelectTypeDataList = $scope.typeTempSelectTypeDataList;
+					
+					if (isNotEmpty(typeTempSelectTypeDataList)) {
+						for (var i = 0; i < typeTempSelectTypeDataList.length; i++) {
+							var typeItem = typeTempSelectTypeDataList[i];
+							//存在该类型
+							if (typeItem.id == typeData.id) {
+								return true;
+							}
+						}
+					}
+					
+					return false;
+				},
+			}
+			
+			$scope.urlTypeSelectModule.toTypeSelect(urlTypeSelectModuleCallbackMap, "2");
+		}
+		
+		/**
+		 * 模板选择url类型板
+		 */
+		$scope.typeTempSelectType = function(typeData) {
+			typeData.enabled = typeData.enabled == 1 ? 0 : 1;
+		}
+		
+		/**
+		 * 模板选择单个url类型
+		 */
+		$scope.typeTempSelectSingleType = function(typeData) {
+			
 		}
 	}
 }

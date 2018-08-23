@@ -22,7 +22,7 @@
 					<div id="user-profile-2" class="user-profile">
 						<div class="tabbable">
 							<ul class="nav nav-tabs padding-18">
-								<li ng-dblclick="toTypeTempSelectType()" class="active">
+								<li ng-dblclick="typeTempToTypeSelect()" class="active">
 									<a data-toggle="tab" href="#home">
 										默  认
 									</a>
@@ -31,11 +31,12 @@
 							
 							<div class="tab-content no-border padding-24" style="padding : 24px 0px;">
 								<div id="home" class="tab-pane in active">
-									<div ng-include="'/module/toModuleUrlTypeSelect'"></div>
-									
 									<div ng-show="isTypeTempShowArea == 1" class="type-temp-btns">
-										<button class="btn btn-primary btn-sm">蓝色按钮蓝色按钮</button>
-										<button class="btn btn-grey btn-sm">灰色按钮蓝色按钮</button>
+										<button ng-click="$evalAsync(typeTempSelectType(typeData))" ng-dblclick="typeTempSelectSingleType(typeData)" 
+											ng-repeat="typeData in typeTempSelectTypeDataList" 
+											class="btn btn-{{typeData.enabled == 0 ? 'grey' : 'primary'}} btn-sm">
+											{{typeData.name}}
+										</button>
 										
 										<h3 class="row header smaller lighter grey"></h3>
 									</div>
@@ -134,7 +135,7 @@
 											</span>
 										</div>
 									</div>
-									<button ng-click="toTypeSelect()" class="btn btn-white btn-info btn-bold">
+									<button ng-click="editUrlToTypeSelect()" class="btn btn-white btn-info btn-bold">
 										<i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
 										选 择
 									</button>
@@ -159,58 +160,6 @@
 		</div>
 	</div>
 	
-	<!-- 编辑界面 -->							
-	<div id="typeSelectPanel" class="modal fade" tabindex="-2">
-		<div class="modal-dialog" style="width: 1200px;">
-			<div class="modal-content">
-				<div class="modal-header no-padding">
-					<div class="table-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-							<span class="white">&times;</span>
-						</button>
-						<div>URL类型选择</div>
-					</div>
-				</div>
-				
-				<div class="modal-body">
-					<div class="modal-edit-panel-content">
-						<div class="dd" id="nestable">
-							
-							<script id="urlTypeRecursion" type="text/ng-template">
-								<li class="dd-item {{typeData.childList.length != 0 && typeData.expandStatus == 1 ? '' : 'dd-collapsed'}}">
-									<button ng-click="typeData.expandStatus = 0" ng-show="typeData.childList.length != 0 && typeData.expandStatus == 1" data-action="collapse" type="button">Collapse</button>
-									<button ng-click="typeData.expandStatus = 1" ng-show="typeData.childList.length != 0 && typeData.expandStatus == 0" data-action="expand" type="button">Expand</button>
-									<div ng-click="typeSelectLi(typeData)" class="dd-handle">
-										{{typeData.name}}
-										<div class="pull-right action-buttons">
-											
-										</div>
-										<span ng-show="isTypeSelectedLi(typeData)" class="sticker">
-											<span class="label label-success arrowed-in">
-												<i class="ace-icon fa fa-check bigger-110"></i>
-											</span>
-										</span>
-									</div>
-									
-									<ol class="dd-list" ng-init="parentTypeData=typeData; typeData=childTypeData" ng-repeat="childTypeData in typeData.childList" ng-include="'urlTypeRecursion'">
-									</ol>
-								</li>
-							</script> 
-						
-							<ol class="dd-list" ng-repeat="typeData in typeDataList" ng-include="'urlTypeRecursion'">
-							</ol>
-						</div>
-					</div>
-				</div>
-				
-				<div class="modal-footer no-margin-top">
-					<button class="btn btn-white btn-info btn-bold pull-left" data-dismiss="modal">
-						<i class="ace-icon fa fa-floppy-o bigger-120 blue"></i>
-						确 定
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+	<div ng-include="'/module/toModuleUrlTypeSelect'"></div>
 </body>
 </html>

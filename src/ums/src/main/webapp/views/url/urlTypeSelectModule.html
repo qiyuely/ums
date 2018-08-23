@@ -20,24 +20,24 @@
 								<li class="dd-item {{typeData.childList.length != 0 && typeData.expandStatus == 1 ? '' : 'dd-collapsed'}}">
 									<button ng-click="typeData.expandStatus = 0" ng-show="typeData.childList.length != 0 && typeData.expandStatus == 1" data-action="collapse" type="button">Collapse</button>
 									<button ng-click="typeData.expandStatus = 1" ng-show="typeData.childList.length != 0 && typeData.expandStatus == 0" data-action="expand" type="button">Expand</button>
-									<div ng-click="typeSelectLi(typeData)" class="dd-handle">
+									<div ng-click="urlTypeSelectModule.typeSelectLi(typeData)" class="dd-handle">
 										{{typeData.name}}
 										<div class="pull-right action-buttons">
 											
 										</div>
-										<span ng-show="isTypeSelectedLi(typeData)" class="sticker">
+										<span ng-show="urlTypeSelectModule.isTypeSelectedLi(typeData)" class="sticker">
 											<span class="label label-success arrowed-in">
 												<i class="ace-icon fa fa-check bigger-110"></i>
 											</span>
 										</span>
 									</div>
 									
-									<ol class="dd-list" ng-init="parentTypeData=typeData; typeData=childTypeData" ng-repeat="childTypeData in typeData.childList" ng-include="'urlTypeRecursion'">
+									<ol class="dd-list" ng-init="parentTypeData=typeData; typeData=childTypeData" ng-repeat="childTypeData in typeData.childList" ng-include="'urlTypeSelectModuleRecursion'">
 									</ol>
 								</li>
 							</script> 
 						
-							<ol class="dd-list" ng-repeat="typeData in urlTypeSelectModuleData.typeDataList" ng-include="'urlTypeSelectModuleRecursion'">
+							<ol class="dd-list" ng-repeat="typeData in urlTypeSelectModule.typeDataList" ng-include="'urlTypeSelectModuleRecursion'">
 							</ol>
 												
 						</div>

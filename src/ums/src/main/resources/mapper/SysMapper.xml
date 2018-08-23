@@ -24,5 +24,17 @@
 			url_id varchar(32) comment 'url id',
 			url_type_id varchar(32) comment 'url类型id'
 		);
+		
+		<!-- url类型模板表 -->
+		create table if not exists t_url_type_temp comment 'url类型模板表' (
+			id varchar(32) comment 'id' primary key,
+			name varchar(50) comment '类型模板名称'
+		);
+		
+		<!-- url类型模板关系表 -->
+		create table if not exists t_url_type_temp_rel comment 'url类型模板关系表' (
+			url_type_temp_id varchar(32) comment 'url类型模板id',
+			url_type_id varchar(32) comment 'url类型id'
+		);
 	</insert>
 </mapper>
