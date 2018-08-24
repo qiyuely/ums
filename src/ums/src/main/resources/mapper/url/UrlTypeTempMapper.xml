@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- url类型模板mapper -->
+<mapper namespace="com.qiyuely.ums.dao.UrlTypeTempDao">
+	<resultMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlTypeTempEntity"/>
+	<parameterMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlTypeTempEntity"/>
+	
+	<!-- 表所有字段 -->
+	<sql id="allColumns">
+		id, name
+	</sql>
+	
+	<!-- 查询列表 -->
+	<select id="queryList" resultMap="BaseMap">
+		select <include refid="allColumns"/> from t_url_type_temp
+	</select>
+	
+	<!-- 插入 -->
+	<insert id="insert" parameterMap="BaseMap">
+		insert into t_url_type_temp (<include refid="allColumns"/>
+		) values (
+			#{id},
+            #{name}
+		)
+	</insert>
+	
+	<!-- 修改 -->
+	<update id="update" parameterMap="BaseMap">
+		update t_url_type_temp
+		<set>
+			<if test="name != null">
+	        	name = #{name},
+	      	</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<!-- 删除 -->
+	<delete id="delete">
+		delete from t_url_type_temp where id = #{id}
+	</delete>
+	
+	<!-- 根据名字查询url类型 -->
+	<select id="findByName" resultMap="BaseMap">
+		select <include refid="allColumns"/> from t_url_type_temp
+		where name = #{name}
+		limit 1
+	</select>
+</mapper>

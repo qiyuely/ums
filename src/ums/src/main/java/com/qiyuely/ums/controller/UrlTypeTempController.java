@@ -42,7 +42,7 @@ public class UrlTypeTempController {
 	 */
 	@ResponseBody
 	@RequestMapping("queryUrlTypeTempInfo")
-	public Result<List<UrlTypeTempDto>> queryUrlTypeInfo() {
+	public Result<List<UrlTypeTempDto>> queryUrlTypeTempInfo() {
 		return urlTypeTempService.queryUrlTypeTempInfo();
 	}
 	

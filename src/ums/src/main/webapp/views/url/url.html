@@ -22,15 +22,16 @@
 					<div id="user-profile-2" class="user-profile">
 						<div class="tabbable">
 							<ul class="nav nav-tabs padding-18">
-								<li ng-dblclick="typeTempToTypeSelect()" class="active">
-									<a data-toggle="tab" href="#home">
-										默  认
+								<li ng-repeat="typeTempData in typeTempDataList" ng-dblclick="typeTempToTypeSelect()" class="{{typeTempData.active == 1 ? 'active' : ''}}">
+									<a data-toggle="tab" href="#typeTempArea_{{typeTempData.id}}">
+										{{typeTempData.name}}
 									</a>
 								</li>
 							</ul>
 							
 							<div class="tab-content no-border padding-24" style="padding : 24px 0px;">
-								<div id="home" class="tab-pane in active">
+								<div ng-repeat="typeTempData in typeTempDataList" id="#typeTempArea_{{typeTempData.id}}" 
+									class="tab-pane in {{typeTempData.active == 1 ? 'active' : ''}}">
 									<div ng-show="isTypeTempShowArea == 1" class="type-temp-btns">
 										<button ng-click="$evalAsync(typeTempSelectType(typeData))" ng-dblclick="typeTempSelectSingleType(typeData)" 
 											ng-repeat="typeData in typeTempSelectTypeDataList" 

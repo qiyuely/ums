@@ -5,7 +5,7 @@ mainStates["urlView"] = {
 	controller : function($scope, $http) {
 		
 		//数据列表
-		$scope.dataList = {};
+		$scope.dataList = new Array();
 		//编辑类型，0：新增，1：修改
 		$scope.editType = "0";
 		//编辑的数据
@@ -13,10 +13,11 @@ mainStates["urlView"] = {
 		//是否展示url类型模板区域，0：否；1：是
 		$scope.isTypeTempShowArea = 1;
 		//url类型数据列表
-		$scope.typeDataList = {};
+		$scope.typeDataList = new Array();
 		//类型模板已选择的类型数据列表
 		$scope.typeTempSelectTypeDataList = new Array();
-		
+		//类型模板数据列表
+		$scope.typeTempDataList = new Array();
 		
 		
 		//构建url类型选择组件
@@ -34,12 +35,48 @@ mainStates["urlView"] = {
 				var curDataList = result.data.data || [];
 				$scope.typeDataList = curDataList;
 				
+				//查询url类型模板
+				$scope.searchTypeTemp();
+				
 				//查询url信息列表
 				$scope.search();
 			});
 		}
 		//默认查询一次url类型
 		$scope.searchType();
+		
+		/**
+		 * 查询url类型模板
+		 */
+		$scope.searchTypeTemp = function() {
+			$http({
+				url : "/url/typeTemp/queryUrlTypeTempInfo",
+				method : "post",
+				params : {}
+			}).then(function(result) {
+				var dataList = result.data.data || new Array();
+				
+				//默认类型模板
+				var defaultTypeTempData = {
+					name : "默  认",
+					active : 1
+				}
+				$scope.typeTempDataList.push(defaultTypeTempData);
+				
+				for (var i = 0; i < dataList.length; i++) {
+					var data = dataList[i];
+					data.typeList = new Array();
+					
+					data.active = 0;
+					$scope.typeTempDataList.push(data);
+					
+					//补充url类型模板的url类型信息
+					$scope.supplementUrlTypeTempInfoForType(data, $scope.typeDataList);
+				}
+				
+				console.log($scope.typeTempDataList);
+			});
+		};
 		
 		/**
 		 * 查询
@@ -55,7 +92,7 @@ mainStates["urlView"] = {
 				
 				for (var i = 0; i < dataList.length; i++) {
 					var data = dataList[i];
-					data.typeList = [];
+					data.typeList = new Array();
 					
 					//补充url的url类型信息
 					$scope.supplementUrlInfoForType(data, $scope.typeDataList);
@@ -77,6 +114,31 @@ mainStates["urlView"] = {
 						//如果还有子类型列表，则递归处理
 						if (isNotEmpty(typeData.childList)) {
 							$scope.supplementUrlInfoForType(data, typeData.childList);
+						}
+						
+						//有此url类型
+						if (typeId == typeData.id) {
+							data.typeList.push(typeData);
+						}
+					}
+				}
+			}
+		}
+		
+		/**
+		 * 补充url类型模板的url类型信息
+		 */
+		$scope.supplementUrlTypeTempInfoForType = function(data, typeDataList) {
+			if(isNotEmpty(data.typeIdList) && isNotEmpty(typeDataList)) {
+				for (var i = 0; i < data.typeIdList.length; i++) {
+					var typeId = data.typeIdList[i];
+					
+					for (var j = 0; j < typeDataList.length; j++) {
+						var typeData = typeDataList[j];
+						
+						//如果还有子类型列表，则递归处理
+						if (isNotEmpty(typeData.childList)) {
+							$scope.supplementUrlTypeTempInfoForType(data, typeData.childList);
 						}
 						
 						//有此url类型

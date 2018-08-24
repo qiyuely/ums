@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- url类型关系管理 -->
+<mapper namespace="com.qiyuely.ums.dao.UrlTypeTempRelDao">
+	<resultMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlTypeTempRelEntity"/>
+	<parameterMap id="BaseMap" type="com.qiyuely.ums.entity.url.UrlTypeTempRelEntity"/>
+	
+	<!-- 表所有字段 -->
+	<sql id="allColumns">
+		url_type_temp_id, url_type_id
+	</sql>
+	
+	<!-- 插入 -->
+	<insert id="insert" parameterMap="BaseMap">
+		insert into t_url_type_temp_rel (<include refid="allColumns"/>
+		) values (
+			#{urlTypeTempId},
+            #{urlTypeId}
+		)
+	</insert>
+	
+	<!-- 根据url类型模板id删除所有的url类型关系 -->
+	<delete id="deleteByTempId">
+		delete from t_url_type_temp_rel where url_type_temp_id = #{tempId}
+	</delete>
+	
+	<!-- 根据url类型模板查询所有的url类型id列表 -->
+	<select id="queryUrlTypeIdListByTempId" resultType="string">
+		select url_type_id from t_url_type_temp_rel
+		where url_type_temp_id = #{tempId}
+	</select>
+</mapper>

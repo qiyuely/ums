@@ -17,26 +17,26 @@ import com.qiyuely.ums.req.url.UrlTypeTempUpdateReq;
 public interface UrlTypeTempService {
 	
 	/**
-	 * 查询url类型信息
+	 * 查询url类型模板信息
 	 */
 	public Result<List<UrlTypeTempDto>> queryUrlTypeTempInfo();
 	
 	/**
-	 * 创建url类型
+	 * 创建url类型模板
 	 * @param entity
 	 * @return
 	 */
 	public Result<UrlTypeTempDto> createUrlTypeTemp(UrlTypeTempCreateReq req);
 	
 	/**
-	 * 修改url类型
+	 * 修改url类型模板
 	 * @param entity
 	 * @return
 	 */
 	public Result<Void> updateUrlTypeTemp(UrlTypeTempUpdateReq req);
 	
 	/**
-	 * 删除url类型
+	 * 删除url类型模板
 	 * @param entity
 	 * @return
 	 */
