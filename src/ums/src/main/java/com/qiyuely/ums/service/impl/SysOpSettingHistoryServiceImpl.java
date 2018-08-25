@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.qiyuely.remex.utils.CollectionUtils;
 import com.qiyuely.ums.dao.SysOpSettingHistoryDao;
@@ -51,6 +52,7 @@ public class SysOpSettingHistoryServiceImpl extends BaseService implements SysOp
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<Void> updateOpSettingHistory(SysOpSettingHistoryUpdateReq req) {
 		SysOpSettingHistoryEntity entity = sysOpSettingHistoryDao.findByOpKey(req.getOpKey());

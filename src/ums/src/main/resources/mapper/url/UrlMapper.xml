@@ -8,7 +8,7 @@
 	
 	<!-- 表所有字段 -->
 	<sql id="allColumns">
-		id, url, remark
+		id, name, url, remark
 	</sql>
 	
 	<!-- 插入 -->
@@ -16,6 +16,7 @@
 		insert into t_url (<include refid="allColumns"/>
 		) values (
 			#{id},
+			#{name},
             #{url},
             #{remark}
 		)
@@ -35,6 +36,9 @@
 	      	</if>
 	      	<if test="remark != null">
 	        	remark = #{remark},
+	      	</if>
+	      	<if test="name != null">
+	        	name = #{name},
 	      	</if>
 		</set>
 		where id = #{id}

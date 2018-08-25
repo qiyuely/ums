@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.qiyuely.remex.utils.CollectionUtils;
 import com.qiyuely.remex.utils.StringUtils;
@@ -63,6 +64,7 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<UrlTypeDto> createUrlType(UrlTypeCreateReq req) {
 		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
@@ -87,6 +89,7 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<Void> updateUrlType(UrlTypeUpdateReq req) {
 		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
@@ -108,6 +111,7 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<Void> deleteUrlType(UrlTypeDeleteReq req) {
 		urlTypeDao.delete(req.getId());

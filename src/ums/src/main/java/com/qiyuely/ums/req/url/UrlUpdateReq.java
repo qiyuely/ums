@@ -14,6 +14,9 @@ public class UrlUpdateReq implements Serializable {
 	
 	/** id */
 	private String id;
+	
+	/** 名称 */
+	private String name;
 
 	/** url */
 	private String url;
@@ -58,5 +61,13 @@ public class UrlUpdateReq implements Serializable {
 	
 	public List<String> getTypeIdList() {
 		return typeIdList;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

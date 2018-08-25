@@ -15,6 +15,9 @@ public class UrlCreateReq implements Serializable {
 	/** url */
 	private String url;
 	
+	/** 名称 */
+	private String name;
+	
 	/** 备注 */
 	private String remark;
 	
@@ -47,5 +50,13 @@ public class UrlCreateReq implements Serializable {
 	
 	public List<String> getTypeIdList() {
 		return typeIdList;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

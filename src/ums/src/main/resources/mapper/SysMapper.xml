@@ -8,6 +8,7 @@
 		<!-- url信息表 -->
 		create table if not exists t_url comment 'url信息表' (
 			id varchar(32) comment 'id' primary key,
+			name varchar(50) comment '类型名称',
 			url varchar(255) comment 'url',
 			remark varchar(500) comment '备注'
 		);

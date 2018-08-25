@@ -2,6 +2,7 @@ package com.qiyuely.ums.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.qiyuely.ums.dao.SysDao;
 import com.qiyuely.ums.framework.BaseService;
@@ -22,6 +23,7 @@ public class SysServiceImpl extends BaseService implements SysService {
 	/**
 	 * 初始化数据库
 	 */
+	@Transactional
 	@Override
 	public void initDb() {
 		sysDao.initDb();

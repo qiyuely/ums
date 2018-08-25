@@ -173,6 +173,9 @@ mainStates["urlView"] = {
 					
 					$scope.dataList.push(data);
 					
+					//过滤出url信息列表
+					$scope.filterUrlInfoListHandle();
+					
 					rmsg("创建成功！");
 					$('#editPanel').modal('hide');
 				} else {
@@ -200,6 +203,9 @@ mainStates["urlView"] = {
 					params : editReq
 				}).then(function(result) {
 					if (httpSuccess(result)) {
+						//过滤出url信息列表
+						$scope.filterUrlInfoListHandle();
+						
 						rmsg("修改成功！");
 						$('#editPanel').modal('hide');
 					} else {
@@ -217,6 +223,7 @@ mainStates["urlView"] = {
 			
 			var editReq = {
 				id : editData.id,
+				name : editData.name,
 				url : editData.url,
 				remark : editData.remark,
 				typeIdList : editData.typeIdList
@@ -239,6 +246,9 @@ mainStates["urlView"] = {
 				}).then(function(result) {
 					if (httpSuccess(result)) {
 						$scope.dataList.splice(dataIndex, 1);
+						
+						//过滤出url信息列表
+						$scope.filterUrlInfoListHandle();
 						rmsg("删除成功！");
 					} else {
 						writeHttpErrorMsg(result);

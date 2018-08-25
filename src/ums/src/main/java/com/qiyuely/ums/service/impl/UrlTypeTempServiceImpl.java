@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.qiyuely.remex.utils.CollectionUtils;
 import com.qiyuely.remex.utils.StringUtils;
@@ -63,6 +64,7 @@ public class UrlTypeTempServiceImpl extends BaseService implements UrlTypeTempSe
 	/**
 	 * 创建url类型模板
 	 */
+	@Transactional
 	@Override
 	public Result<UrlTypeTempDto> createUrlTypeTemp(UrlTypeTempCreateReq req) {
 		UrlTypeTempEntity entityByName = urlTypeTempDao.findByName(req.getName());
@@ -97,6 +99,7 @@ public class UrlTypeTempServiceImpl extends BaseService implements UrlTypeTempSe
 	/**
 	 * 修改url类型模板
 	 */
+	@Transactional
 	@Override
 	public Result<Void> updateUrlTypeTemp(UrlTypeTempUpdateReq req) {
 		UrlTypeTempEntity entityByName = urlTypeTempDao.findByName(req.getName());
@@ -131,6 +134,7 @@ public class UrlTypeTempServiceImpl extends BaseService implements UrlTypeTempSe
 	/**
 	 * 删除url类型模板
 	 */
+	@Transactional
 	@Override
 	public Result<Void> deleteUrlTypeTemp(UrlTypeTempDeleteReq req) {
 		urlTypeTempDao.delete(req.getId());
@@ -146,6 +150,7 @@ public class UrlTypeTempServiceImpl extends BaseService implements UrlTypeTempSe
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<Void> updateUrlTypeTempRel(UrlTypeTempUpdateRelReq req) {
 		//根据url类型模板id删除所有的url类型关系

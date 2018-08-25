@@ -11,6 +11,9 @@ public class UrlEntity {
 	/** id */
 	private String id;
 	
+	/** 名称 */
+	private String name;
+	
 	/** url */
 	private String url;
 	
@@ -39,5 +42,13 @@ public class UrlEntity {
 	
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

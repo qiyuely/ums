@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.qiyuely.remex.utils.CollectionUtils;
 import com.qiyuely.remex.utils.StringUtils;
@@ -81,10 +82,12 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<UrlDto> createUrl(UrlCreateReq req) {
 		UrlEntity entity = new UrlEntity();
 		entity.setId(IdUtil.createId());
+		entity.setName(req.getName());
 		entity.setUrl(req.getUrl());
 		entity.setRemark(req.getRemark());
 		
@@ -114,6 +117,7 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<Void> updateUrl(UrlUpdateReq req) {
 		UrlEntity entity = new UrlEntity();
@@ -145,6 +149,7 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	 * @param entity
 	 * @return
 	 */
+	@Transactional
 	@Override
 	public Result<Void> deleteUrl(UrlDeleteReq req) {
 		urlManagerDao.delete(req.getId());
@@ -194,6 +199,7 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	 */
 	private void fillCreate(UrlDto dto, UrlEntity entity) {
 		dto.setId(entity.getId());
+		dto.setName(entity.getName());
 		dto.setUrl(entity.getUrl());
 		dto.setRemark(entity.getRemark());
 	}
@@ -203,6 +209,7 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	 */
 	private void fillCreate(UrlEntity entity, UrlUpdateReq req) {
 		entity.setId(req.getId());
+		entity.setName(req.getName());
 		entity.setUrl(req.getUrl());
 		entity.setRemark(req.getRemark());
 	}
