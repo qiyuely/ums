@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 操作设定历史mapper -->
+<mapper namespace="com.qiyuely.ums.dao.SysOpSettingHistoryDao">
+	<resultMap id="BaseMap" type="com.qiyuely.ums.entity.sys.SysOpSettingHistoryEntity"/>
+	<parameterMap id="BaseMap" type="com.qiyuely.ums.entity.sys.SysOpSettingHistoryEntity"/>
+	
+	<!-- 表所有字段 -->
+	<sql id="allColumns">
+		op_key, setting
+	</sql>
+	
+	<!-- 插入 -->
+	<insert id="insert" parameterMap="BaseMap">
+		insert into t_op_setting_history (<include refid="allColumns"/>
+		) values (
+			#{opKey},
+            #{setting}
+		)
+	</insert>
+	
+	<!-- 查询列表 -->
+	<select id="queryList" resultMap="BaseMap">
+		select <include refid="allColumns"/> from t_op_setting_history
+	</select>
+	
+	<!-- 修改 -->
+	<update id="update" parameterMap="BaseMap">
+		update t_op_setting_history
+		set setting = #{setting}
+		where op_key = #{opKey}
+	</update>
+	
+	<!-- 根据操作主键查询操作设定 -->
+	<select id="findByOpKey" resultMap="BaseMap">
+		select <include refid="allColumns"/> from t_op_setting_history
+		where op_key = #{opKey}
+		limit 1
+	</select>
+</mapper>

@@ -12,12 +12,24 @@ mainStates["urlView"] = {
 		$scope.editData = {};
 		//是否展示url类型模板区域，0：否；1：是
 		$scope.isTypeTempShowArea = 1;
-		//url类型数据列表
-		$scope.typeDataList = new Array();
+		//单列表结构的url类型数据列表
+		$scope.typeDataLineList = new Array();
 		//类型模板已选择的类型数据列表
 		$scope.typeTempSelectTypeDataList = new Array();
 		//类型模板数据列表
 		$scope.typeTempDataList = new Array();
+		//已选中的类型模板
+		$scope.typeTempDataSelected = {};
+		//编辑的类型数据列表
+		$scope.editTypeDataList = new Array();
+		//过滤出的url信息列表
+		$scope.filterUrlInfoList = new Array();
+		//关键词
+		$scope.urlKeyword = "";
+		//操作设定历史记录列表
+		$scope.sysOpSettingHistoryList = new Array();
+		//是否使用操作设定功能
+		$scope.useSysOpSetting = true;
 		
 		
 		//构建url类型选择组件
@@ -32,18 +44,41 @@ mainStates["urlView"] = {
 				method : "post",
 				params : {}
 			}).then(function(result) {
-				var curDataList = result.data.data || [];
-				$scope.typeDataList = curDataList;
+				var dataList = result.data.data || new Array();
+				
+				//提取url类型数据列表为单列表结构的
+				$scope.fetchLineTypeDataLine(dataList);
 				
 				//查询url类型模板
 				$scope.searchTypeTemp();
 				
 				//查询url信息列表
 				$scope.search();
+				
+				//初始化操作设定
+				$scope.initSysOpSettingHistory();
 			});
 		}
 		//默认查询一次url类型
 		$scope.searchType();
+		
+		/**
+		 * 提取url类型数据列表为单列表结构的
+		 */
+		$scope.fetchLineTypeDataLine = function(typeDataList) {
+			if(isNotEmpty(typeDataList)) {
+				for (var i = 0; i < typeDataList.length; i++) {
+					var typeData = typeDataList[i];
+					
+					$scope.typeDataLineList.push(typeData);
+					
+					//如果还有子类型列表，则递归处理
+					if (isNotEmpty(typeData.childList)) {
+						$scope.fetchLineTypeDataLine(typeData.childList);
+					}
+				}
+			}
+		}
 		
 		/**
 		 * 查询url类型模板
@@ -58,23 +93,32 @@ mainStates["urlView"] = {
 				
 				//默认类型模板
 				var defaultTypeTempData = {
+					id : "DEFAULT_TEMP",
 					name : "默  认",
-					active : 1
+					active : 1,
+					typeIdList : new Array(),
+					typeIdEnabledList : new Array()
 				}
 				$scope.typeTempDataList.push(defaultTypeTempData);
 				
 				for (var i = 0; i < dataList.length; i++) {
 					var data = dataList[i];
-					data.typeList = new Array();
-					
 					data.active = 0;
-					$scope.typeTempDataList.push(data);
 					
-					//补充url类型模板的url类型信息
-					$scope.supplementUrlTypeTempInfoForType(data, $scope.typeDataList);
+					//可用类型id列表
+					data.typeIdEnabledList = new Array();
+					if (isNotEmpty(data.typeIdList)) {
+						for (var k = 0; k < data.typeIdList.length; k++) {
+							var typeId = data.typeIdList[k];
+							data.typeIdEnabledList.push(typeId);
+						}
+					}
+					
+					$scope.typeTempDataList.push(data);
 				}
 				
-				console.log($scope.typeTempDataList);
+				//初始化操作设定
+				$scope.initSysOpSettingHistory();
 			});
 		};
 		
@@ -93,61 +137,11 @@ mainStates["urlView"] = {
 				for (var i = 0; i < dataList.length; i++) {
 					var data = dataList[i];
 					data.typeList = new Array();
-					
-					//补充url的url类型信息
-					$scope.supplementUrlInfoForType(data, $scope.typeDataList);
 				}
+				
+				//初始化操作设定
+				$scope.initSysOpSettingHistory();
 			});
-		}
-		
-		/**
-		 * 补充url的url类型信息
-		 */
-		$scope.supplementUrlInfoForType = function(data, typeDataList) {
-			if(isNotEmpty(data.typeIdList) && isNotEmpty(typeDataList)) {
-				for (var i = 0; i < data.typeIdList.length; i++) {
-					var typeId = data.typeIdList[i];
-					
-					for (var j = 0; j < typeDataList.length; j++) {
-						var typeData = typeDataList[j];
-						
-						//如果还有子类型列表，则递归处理
-						if (isNotEmpty(typeData.childList)) {
-							$scope.supplementUrlInfoForType(data, typeData.childList);
-						}
-						
-						//有此url类型
-						if (typeId == typeData.id) {
-							data.typeList.push(typeData);
-						}
-					}
-				}
-			}
-		}
-		
-		/**
-		 * 补充url类型模板的url类型信息
-		 */
-		$scope.supplementUrlTypeTempInfoForType = function(data, typeDataList) {
-			if(isNotEmpty(data.typeIdList) && isNotEmpty(typeDataList)) {
-				for (var i = 0; i < data.typeIdList.length; i++) {
-					var typeId = data.typeIdList[i];
-					
-					for (var j = 0; j < typeDataList.length; j++) {
-						var typeData = typeDataList[j];
-						
-						//如果还有子类型列表，则递归处理
-						if (isNotEmpty(typeData.childList)) {
-							$scope.supplementUrlTypeTempInfoForType(data, typeData.childList);
-						}
-						
-						//有此url类型
-						if (typeId == typeData.id) {
-							data.typeList.push(typeData);
-						}
-					}
-				}
-			}
 		}
 		
 		/**
@@ -158,6 +152,8 @@ mainStates["urlView"] = {
 			
 			//重置
 			$scope.editData = {};
+			//初始化编辑的类型数据列表
+			$scope.initEditTypeDataList();
 			
 			$('#editPanel').modal("show");
 		}
@@ -169,6 +165,8 @@ mainStates["urlView"] = {
 			$scope.editType = "1";
 			
 			$scope.editData = data;
+			//初始化编辑的类型数据列表
+			$scope.initEditTypeDataList();
 			
 			$('#editPanel').modal("show");
 		}
@@ -251,20 +249,11 @@ mainStates["urlView"] = {
 		$scope.fetchEditReq = function() {
 			var editData = $scope.editData;
 			
-			//url类型id
-			var typeIdList = new Array();
-			if (isNotEmpty(editData.typeList)) {
-				for (var i = 0; i < editData.typeList.length; i++) {
-					var typeItem = editData.typeList[i];
-					typeIdList.push(typeItem.id);
-				}
-			}
-			
 			var editReq = {
 				id : editData.id,
 				url : editData.url,
 				remark : editData.remark,
-				typeIdList : typeIdList
+				typeIdList : editData.typeIdList
 			};
 			
 			return editReq;
@@ -318,21 +307,28 @@ mainStates["urlView"] = {
 				typeSelectLi : function(typeData) {
 					var editData = $scope.editData;
 					
-					if (isEmpty(editData.typeList)) {
-						editData.typeList = [];
+					if (isEmpty(editData.typeIdList)) {
+						editData.typeIdList = new Array();
 					}
 					
-					for (var i = 0; i < editData.typeList.length; i++) {
-						var typeItem = editData.typeList[i];
+					var isRemove = false;
+					for (var i = 0; i < editData.typeIdList.length; i++) {
+						var typeIdItem = editData.typeIdList[i];
 						//已经存在则去除选择
-						if (typeItem.id == typeData.id) {
-							editData.typeList.splice(i, 1);
-							return;
+						if (typeIdItem == typeData.id) {
+							editData.typeIdList.splice(i, 1);
+							isRemove = true;
+							break;
 						}
 					}
 					
 					//最终不存在，则新增
-					editData.typeList.push(typeData);
+					if (!isRemove) {
+						editData.typeIdList.push(typeData.id);
+					}
+					
+					//初始化编辑的类型数据列表
+					$scope.initEditTypeDataList();
 				},
 				
 				/**
@@ -341,11 +337,11 @@ mainStates["urlView"] = {
 				isTypeSelectedLi : function(typeData) {
 					var editData = $scope.editData;
 					
-					if (isNotEmpty(editData.typeList)) {
-						for (var i = 0; i < editData.typeList.length; i++) {
-							var typeItem = editData.typeList[i];
+					if (isNotEmpty(editData.typeIdList)) {
+						for (var i = 0; i < editData.typeIdList.length; i++) {
+							var typeIdItem = editData.typeIdList[i];
 							//存在该类型
-							if (typeItem.id == typeData.id) {
+							if (typeIdItem == typeData.id) {
 								return true;
 							}
 						}
@@ -362,18 +358,25 @@ mainStates["urlView"] = {
 		 * url类型移除选择
 		 */
 		$scope.typeRemoveSelectLi = function(typeDataIndex) {
-			$scope.editData.typeList.splice(typeDataIndex, 1);
+			$scope.editData.typeIdList.splice(typeDataIndex, 1);
+			
+			//初始化编辑的类型数据列表
+			$scope.initEditTypeDataList();
 		}
 		
 		/**
 		 * 展示或关闭url类型模板区域
 		 */
 		$scope.showTypeTempArea = function() {
+			var newIsTypeTempShowArea = 1;
 			if ($scope.isTypeTempShowArea == 1) {
-				$scope.isTypeTempShowArea = 0;
+				newIsTypeTempShowArea = 0;
 			} else {
-				$scope.isTypeTempShowArea = 1;
+				newIsTypeTempShowArea = 1;
 			}
+			
+			//修改操作设定
+			$scope.updateSysOpSetting(sysOpSettingKey.isTypeTempShowArea, newIsTypeTempShowArea);
 		}
 		
 		/**
@@ -388,19 +391,44 @@ mainStates["urlView"] = {
 				 */
 				typeSelectLi : function(typeData) {
 					var typeTempSelectTypeDataList = $scope.typeTempSelectTypeDataList;
+					var typeTempData = $scope.typeTempDataSelected;
 					
 					for (var i = 0; i < typeTempSelectTypeDataList.length; i++) {
 						var typeItem = typeTempSelectTypeDataList[i];
 						//已经存在则去除选择
 						if (typeItem.id == typeData.id) {
+							typeTempData.typeIdList.splice(i, 1);
 							typeTempSelectTypeDataList.splice(i, 1);
+							
+							//如果有可用类型id则一并移除
+							for (var k = 0; k < typeTempData.typeIdEnabledList.length; k++) {
+								var typeIdEnabled = typeTempData.typeIdEnabledList[k];
+								if (typeItem.id == typeIdEnabled) {
+									typeTempData.typeIdEnabledList.splice(k, 1);
+									break;
+								}
+							}
 							return;
 						}
 					}
 					
 					//最终不存在，则新增
-					typeData.enabled = 1;
+					typeData.enabledForTypeTemp = 1;
+					typeTempData.typeIdList.push(typeData.id);
+					typeTempData.typeIdEnabledList.push(typeData.id);
 					typeTempSelectTypeDataList.push(typeData);
+					
+					//过滤出url信息列表
+					$scope.filterUrlInfoListHandle();
+					
+					//修改操作设定
+					$scope.updateSysOpSetting(sysOpSettingKey.typeTempTypeIdEnabledList, $scope.fetchEnabledTypeIdListBySysOpSetting());
+					
+					//如果是默认模板，则保存下操作设定的类型id
+					if ("DEFAULT_TEMP" == typeTempData.id) {
+						console.log(typeTempData.typeIdList.join(","));
+						$scope.updateSysOpSetting(sysOpSettingKey.defaultTypeTempForTypeIdList, typeTempData.typeIdList.join(","));
+					}
 				},
 				
 				/**
@@ -421,6 +449,29 @@ mainStates["urlView"] = {
 					
 					return false;
 				},
+				
+				/**
+				 * url类型选择保存
+				 */
+				typeSelectSave : function() {
+					var typeTempData = $scope.typeTempDataSelected;
+					var editReq = {
+						id : typeTempData.id,
+						typeIdList : typeTempData.typeIdList
+					};
+					
+					$http({
+						url : "/url/typeTemp/updateUrlTypeTempRel",
+						method : "post",
+						params : editReq
+					}).then(function(result) {
+						if (httpSuccess(result)) {
+							$scope.urlTypeSelectModule.close();
+						} else {
+							writeHttpErrorMsg(result);
+						}
+					});
+				},
 			}
 			
 			$scope.urlTypeSelectModule.toTypeSelect(urlTypeSelectModuleCallbackMap, "2");
@@ -430,7 +481,34 @@ mainStates["urlView"] = {
 		 * 模板选择url类型板
 		 */
 		$scope.typeTempSelectType = function(typeData) {
-			typeData.enabled = typeData.enabled == 1 ? 0 : 1;
+			var newEnabledForTypeTemp = typeData.enabledForTypeTemp == 1 ? 0 : 1;
+			typeData.enabledForTypeTemp = newEnabledForTypeTemp;
+			var typeTempData = $scope.typeTempDataSelected;
+			
+			var isMatch = false;
+			for (var k = 0; k < typeTempData.typeIdEnabledList.length; k++) {
+				var typeIdEnabled = typeTempData.typeIdEnabledList[k];
+				if (typeData.id == typeIdEnabled) {
+					//禁用
+					if (newEnabledForTypeTemp == 0) {
+						typeTempData.typeIdEnabledList.splice(k, 1);
+					}
+					
+					isMatch = true;
+					break;
+				}
+			}
+			
+			//如最终未匹配上，则为新增
+			if (!isMatch && newEnabledForTypeTemp == 1) {
+				typeTempData.typeIdEnabledList.push(typeData.id);
+			}
+			
+			//过滤出url信息列表
+			$scope.filterUrlInfoListHandle();
+			
+			//修改操作设定
+			$scope.updateSysOpSetting(sysOpSettingKey.typeTempTypeIdEnabledList, $scope.fetchEnabledTypeIdListBySysOpSetting());
 		}
 		
 		/**
@@ -438,6 +516,333 @@ mainStates["urlView"] = {
 		 */
 		$scope.typeTempSelectSingleType = function(typeData) {
 			
+		}
+		
+		/**
+		 * 选择某个url类型模板
+		 */
+		$scope.typeTempSelect = function(typeTempData) {
+			$scope.typeTempDataSelected = typeTempData;
+			$scope.typeTempSelectTypeDataList = new Array();
+			var typeDataLineList = $scope.typeDataLineList;
+			
+			if (isNotEmpty(typeTempData.typeIdList)) {
+				for (var j = 0; j < typeTempData.typeIdList.length; j++) {
+					var typeId = typeTempData.typeIdList[j];
+					
+					for (var i = 0; i < typeDataLineList.length; i++) {
+						var typeData = typeDataLineList[i];
+						
+						//有此url类型
+						if (typeId == typeData.id) {
+							$scope.typeTempSelectTypeDataList.push(typeData);
+							
+							var enabledForTypeTemp = 0;
+							for (var k = 0; k < typeTempData.typeIdEnabledList.length; k++) {
+								var typeIdEnabled = typeTempData.typeIdEnabledList[k];
+								if (typeId == typeIdEnabled) {
+									enabledForTypeTemp = 1;
+									break;
+								}
+							}
+							//针对类型模板是否可用
+							typeData.enabledForTypeTemp = enabledForTypeTemp;
+							
+							break;
+						}
+					}
+				}
+			}
+			
+			//过滤出url信息列表
+			$scope.filterUrlInfoListHandle();
+			
+			//修改操作设定
+			$scope.updateSysOpSetting(sysOpSettingKey.typeTempIdSelected, typeTempData.id);
+			
+			//修改操作设定
+			$scope.updateSysOpSetting(sysOpSettingKey.typeTempTypeIdEnabledList, $scope.fetchEnabledTypeIdListBySysOpSetting());
+		}
+		
+		/**
+		 * 初始化编辑的类型数据列表
+		 */
+		$scope.initEditTypeDataList = function() {
+			var editData = $scope.editData;
+			var typeDataLineList = $scope.typeDataLineList;
+			$scope.editTypeDataList = new Array();
+			
+			if (isNotEmpty(editData.typeIdList)) {
+				for (var i = 0; i < editData.typeIdList.length; i++) {
+					var typeIdItem = editData.typeIdList[i];
+					
+					for (var j = 0; j < typeDataLineList.length; j++) {
+						var typeData = typeDataLineList[j];
+						
+						if (typeIdItem == typeData.id) {
+							$scope.editTypeDataList.push(typeData);
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		/**
+		 * 关键词失去焦点事件
+		 */
+		$scope.keywordBlur = function() {
+			//过滤出url信息列表
+			$scope.filterUrlInfoListHandle();
+			
+			//修改操作设定
+			$scope.updateSysOpSetting(sysOpSettingKey.keyword, $scope.urlKeyword);
+		}
+		
+		/**
+		 * 关键词回车事件
+		 */
+		$scope.keywordKeyup = function(e) {
+			var keycode = window.event ? e.keyCode : e.which;
+			if(keycode == 13){
+				//过滤出url信息列表
+				$scope.filterUrlInfoListHandle();
+				
+				//修改操作设定
+				$scope.updateSysOpSetting(sysOpSettingKey.keyword, $scope.urlKeyword);
+			}
+		}
+		
+		/**
+		 * 过滤出url信息列表
+		 */
+		$scope.filterUrlInfoListHandle = function() {
+			$scope.filterUrlInfoList = new Array();
+			var filterUrlInfoList = $scope.filterUrlInfoList;
+			var allUrlDataList =  $scope.dataList;
+			var urlKeyword = $scope.urlKeyword;
+			var typeTempSelectTypeDataList = $scope.typeTempSelectTypeDataList;
+			
+			if (isNotEmpty(allUrlDataList)) {
+				for (var i = 0; i < allUrlDataList.length; i++) {
+					var urlData = allUrlDataList[i];
+					
+					//关键词过滤
+					if (isNotEmpty(urlKeyword)) {
+						if (isEmpty(urlData.url)) {
+							continue;
+						}
+						var reg = new RegExp(urlKeyword, "i");
+						if (!urlData.url.match(reg)) {
+							continue;
+						}
+					}
+					
+					//url类型过滤
+					if (isEmpty(urlData.typeIdList)) {
+						continue;
+					}
+					
+					label:
+					if (isNotEmpty(typeTempSelectTypeDataList)) {
+						var isMatch = false;
+						
+						for (var j = 0; j < typeTempSelectTypeDataList.length; j++) {
+							var typeData = typeTempSelectTypeDataList[j];
+							if (!typeData.enabledForTypeTemp == 1) {
+								continue;
+							}
+							
+							for (var k = 0; k < urlData.typeIdList.length; k++) {
+								var typeIdItem = urlData.typeIdList[k];
+								
+								//匹配上则此url满足
+								if (typeIdItem == typeData.id) {
+									isMatch = true;
+									break label;
+								}
+							}
+						}
+						
+						if (!isMatch) {
+							continue;
+						}
+					}
+					
+					
+					filterUrlInfoList.push(urlData);
+				}
+			}
+		}
+		
+		/**
+		 * 查询操作设定历史
+		 */
+		$scope.searchSysOpSettingHistory = function() {
+			$http({
+				url : "/sys/opSettingHistory/queryOpSettingHistoryList",
+				method : "post",
+				params : {}
+			}).then(function(result) {
+				var dataList = result.data.data || new Array();
+				
+				$scope.sysOpSettingHistoryList = dataList;
+				
+				//初始化操作设定
+				$scope.initSysOpSettingHistory();
+			});
+		}
+		$scope.searchSysOpSettingHistory();
+		
+		/**
+		 * 初始化操作设定
+		 */
+		$scope.initSysOpSettingHistory = function() {
+			if (!$scope.useSysOpSetting) {
+				return;
+			}
+			var sysOpSettingHistoryList = $scope.sysOpSettingHistoryList;
+			var typeTempDataList = $scope.typeTempDataList;
+			
+			var matchTempIndex = -1;
+			for (var i = 0; i < sysOpSettingHistoryList.length; i++) {
+				var sysOpSetting = sysOpSettingHistoryList[i];
+				
+				//是否展示url类型模板区域
+				if (sysOpSettingKey.isTypeTempShowArea == sysOpSetting.opKey && isNotEmpty(sysOpSetting.setting)) {
+					var isTypeTempShowArea = parseFloat(sysOpSetting.setting);
+					
+					$scope.isTypeTempShowArea = isTypeTempShowArea;
+				}
+				
+				//关键词
+				if (sysOpSettingKey.keyword == sysOpSetting.opKey) {
+					var keyword = sysOpSetting.setting;
+					
+					$scope.urlKeyword = keyword;
+				}
+				
+				//已选择的类型模板id
+				if (sysOpSettingKey.typeTempIdSelected == sysOpSetting.opKey && isNotEmpty(sysOpSetting.setting)) {
+					var typeTempIdSelected = sysOpSetting.setting;
+					
+					if (isNotEmpty(typeTempDataList)) {
+						
+						for (var j = 0; j < typeTempDataList.length; j++) {
+							var typeTempData = typeTempDataList[j];
+							
+							if (typeTempIdSelected == typeTempData.id) {
+								$scope.typeTempSelect(typeTempData);
+								matchTempIndex = j;
+								break;
+							}
+						}
+						
+						if (matchTempIndex != -1) {
+							for (var j = 0; j < typeTempDataList.length; j++) {
+								var typeTempData = typeTempDataList[j];
+								
+								if (matchTempIndex == j) {
+									typeTempData.active = 1;
+								} else {
+									typeTempData.active = 0;
+								}
+							}
+						}
+					}
+				}
+				
+				//已选择的类型模板中的可用类型id
+				if (sysOpSettingKey.typeTempTypeIdEnabledList == sysOpSetting.opKey) {
+					if (isNotEmpty(typeTempDataList)) {
+						var typeIdEnabledListGroupArr = sysOpSetting.setting.split(";");
+						
+						for (var k = 0; k < typeIdEnabledListGroupArr.length; k++) {
+							var typeIdEnabledList = typeIdEnabledListGroupArr[k].split(",");
+							
+							for (var j = 0; j < typeTempDataList.length; j++) {
+								var typeTempData = typeTempDataList[j];
+								
+								if (typeIdEnabledList[0] == typeTempData.id) {
+									typeIdEnabledList.splice(0, 1);
+									typeTempData.typeIdEnabledList = typeIdEnabledList;
+								}
+							}
+						}
+						
+					}
+				}
+				
+				//已选择的类型模板中的可用类型id
+				if (sysOpSettingKey.defaultTypeTempForTypeIdList == sysOpSetting.opKey) {
+					for (var j = 0; j < typeTempDataList.length; j++) {
+						var typeTempData = typeTempDataList[j];
+						//如果是默认模板，则取出操作设定的类型id
+						if ("DEFAULT_TEMP" == typeTempData.id) {
+							var typeIdList = sysOpSetting.setting.split(",");
+							typeTempData.typeIdList = typeIdList
+						}
+					}
+					
+				}
+			}
+			
+			//过滤出url信息列表
+			$scope.filterUrlInfoListHandle();
+		}
+		
+		/**
+		 * 修改操作设定
+		 */
+		$scope.updateSysOpSetting = function(opKey, setting) {
+			var editReq = {
+				opKey : opKey,
+				setting : setting
+			}
+			
+			$http({
+				url : "/sys/opSettingHistory/updateOpSettingHistory",
+				method : "post",
+				params : editReq
+			}).then(function(result) {
+				if (httpSuccess(result)) {
+					
+				} else {
+					var msg = result.data.msg;
+					if (isEmpty(msg)) {
+						msg = "未知错误";
+					}
+					console.error(msg);
+				}
+			});
+		}
+		
+		/**
+		 * 提取用于操作设定的可用类型id列表
+		 */
+		$scope.fetchEnabledTypeIdListBySysOpSetting = function() {
+			var setting = "";
+			var typeTempDataList = $scope.typeTempDataList;
+			
+			if (isNotEmpty(typeTempDataList)) {
+				for (var i = 0; i < typeTempDataList.length; i++) {
+					var typeTempData = typeTempDataList[i];
+					
+					if (i != 0) {
+						setting += ";"
+					}
+					
+					setting += typeTempData.id;
+					
+					var typeIdEnabledList = typeTempData.typeIdEnabledList;
+					if (isNotEmpty(typeIdEnabledList)) {
+						setting += ",";
+						setting += typeIdEnabledList.join(",");
+					}
+				}
+			}
+			
+			return setting;
 		}
 	}
 }

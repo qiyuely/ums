@@ -6,6 +6,7 @@ import com.qiyuely.ums.dto.url.UrlTypeTempDto;
 import com.qiyuely.ums.framework.result.Result;
 import com.qiyuely.ums.req.url.UrlTypeTempCreateReq;
 import com.qiyuely.ums.req.url.UrlTypeTempDeleteReq;
+import com.qiyuely.ums.req.url.UrlTypeTempUpdateRelReq;
 import com.qiyuely.ums.req.url.UrlTypeTempUpdateReq;
 
 /**
@@ -41,4 +42,11 @@ public interface UrlTypeTempService {
 	 * @return
 	 */
 	public Result<Void> deleteUrlTypeTemp(UrlTypeTempDeleteReq req);
+	
+	/**
+	 * 修改url类型模板关系
+	 * @param entity
+	 * @return
+	 */
+	public Result<Void> updateUrlTypeTempRel(UrlTypeTempUpdateRelReq req);
 }

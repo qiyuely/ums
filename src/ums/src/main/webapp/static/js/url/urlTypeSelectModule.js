@@ -104,4 +104,24 @@ var urlTypeSelectModule = {
 			}
 		}
 	},
+	
+	/**
+	 * 保存
+	 */
+	save : function() {
+		var sf = this;
+		
+		if (sf.callbackMap.typeSelectSave) {
+			return sf.callbackMap.typeSelectSave();
+		} else {
+			sf.close();
+		}
+	},
+	
+	/**
+	 * 关闭页面
+	 */
+	close : function() {
+		$('#urlTypeSelectModulePanel').modal('hide');
+	}
 }

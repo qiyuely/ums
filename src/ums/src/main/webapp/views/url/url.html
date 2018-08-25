@@ -22,30 +22,30 @@
 					<div id="user-profile-2" class="user-profile">
 						<div class="tabbable">
 							<ul class="nav nav-tabs padding-18">
-								<li ng-repeat="typeTempData in typeTempDataList" ng-dblclick="typeTempToTypeSelect()" class="{{typeTempData.active == 1 ? 'active' : ''}}">
-									<a data-toggle="tab" href="#typeTempArea_{{typeTempData.id}}">
+								<li ng-repeat="typeTempData in typeTempDataList" ng-click="typeTempSelect(typeTempData)" 
+									ng-dblclick="typeTempToTypeSelect()" class="{{typeTempData.active == 1 ? 'active' : ''}}">
+									<a data-toggle="tab" href="#typeTempArea">
 										{{typeTempData.name}}
 									</a>
 								</li>
 							</ul>
 							
 							<div class="tab-content no-border padding-24" style="padding : 24px 0px;">
-								<div ng-repeat="typeTempData in typeTempDataList" id="#typeTempArea_{{typeTempData.id}}" 
-									class="tab-pane in {{typeTempData.active == 1 ? 'active' : ''}}">
+								<div id="#typeTempArea" class="tab-pane in active">
 									<div ng-show="isTypeTempShowArea == 1" class="type-temp-btns">
 										<button ng-click="$evalAsync(typeTempSelectType(typeData))" ng-dblclick="typeTempSelectSingleType(typeData)" 
 											ng-repeat="typeData in typeTempSelectTypeDataList" 
-											class="btn btn-{{typeData.enabled == 0 ? 'grey' : 'primary'}} btn-sm">
+											class="btn btn-{{typeData.enabledForTypeTemp == 0 ? 'grey' : 'primary'}} btn-sm">
 											{{typeData.name}}
 										</button>
 										
 										<h3 class="row header smaller lighter grey"></h3>
 									</div>
 									
-									
 									<label class="pull-right inline">
 										<small class="muted smaller-90">类型列表：</small>
-										<input id="id-button-borders" checked="" type="checkbox" class="ace ace-switch ace-switch-5" />
+										<input id="id-button-borders" ng-model="isTypeTempShowArea" ng-true-value="1" ng-false-value="0" 
+											ng-checked="true" type="checkbox" class="ace ace-switch ace-switch-5" />
 										<span ng-click="showTypeTempArea()" class="lbl middle"></span>
 									</label>
 											
@@ -53,7 +53,8 @@
 										新增 
 										<i class="ace-icon fa fa-plus-square"></i>
 									</button>
-									<input type="text" placeholder="关键字" size="28"/>
+									<input ng-model="urlKeyword" ng-blur="keywordBlur()" ng-keyup="keywordKeyup($event)" 
+										type="text" placeholder="关键字" size="28"/>
 								
 									<div class="row">
 										<div class="col-xs-12">
@@ -66,7 +67,7 @@
 													</tr>
 												</thead>
 												<tbody>
-													<tr ng-repeat="data in dataList">
+													<tr ng-repeat="data in filterUrlInfoList">
 														<td>{{data.url}}</td>
 														<td>{{data.remark}}</td>
 														<td style="width: 180px;">
@@ -130,7 +131,7 @@
 											<span class="tag">
 												根节点
 											</span>
-											<span ng-repeat="typeData in editData.typeList" class="tag">
+											<span ng-repeat="typeData in editTypeDataList" class="tag">
 												{{typeData.name}}
 												<button ng-click="typeRemoveSelectLi($index)" type="button" class="close">×</button>
 											</span>

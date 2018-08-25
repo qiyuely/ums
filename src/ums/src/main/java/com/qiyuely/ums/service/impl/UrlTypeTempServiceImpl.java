@@ -17,6 +17,7 @@ import com.qiyuely.ums.framework.BaseService;
 import com.qiyuely.ums.framework.result.Result;
 import com.qiyuely.ums.req.url.UrlTypeTempCreateReq;
 import com.qiyuely.ums.req.url.UrlTypeTempDeleteReq;
+import com.qiyuely.ums.req.url.UrlTypeTempUpdateRelReq;
 import com.qiyuely.ums.req.url.UrlTypeTempUpdateReq;
 import com.qiyuely.ums.service.UrlTypeTempService;
 import com.qiyuely.ums.utils.IdUtil;
@@ -140,7 +141,30 @@ public class UrlTypeTempServiceImpl extends BaseService implements UrlTypeTempSe
 		return packResult();
 	}
 	
-	
+	/**
+	 * 修改url类型模板关系
+	 * @param entity
+	 * @return
+	 */
+	@Override
+	public Result<Void> updateUrlTypeTempRel(UrlTypeTempUpdateRelReq req) {
+		//根据url类型模板id删除所有的url类型关系
+		urlTypeTempRelDao.deleteByTempId(req.getId());
+
+		if (CollectionUtils.isNotEmpty(req.getTypeIdList())) {
+			for (String urlTypeId : req.getTypeIdList()) {
+				if (StringUtils.isBlank(urlTypeId)) {
+					continue;
+				}
+				UrlTypeTempRelEntity urlTypeRelEntity = new UrlTypeTempRelEntity();
+				urlTypeRelEntity.setUrlTypeTempId(req.getId());
+				urlTypeRelEntity.setUrlTypeId(urlTypeId);
+				urlTypeTempRelDao.insert(urlTypeRelEntity);
+			}
+		}
+		
+		return packResult();
+	}
 	
 
 	/**

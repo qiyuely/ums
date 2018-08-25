@@ -9,8 +9,10 @@ mainStates["urlTypeTempView"] = {
 		$scope.editType = "0";
 		//编辑的数据
 		$scope.editData = {};
-		//url类型数据列表
-		$scope.typeDataList = new Array();
+		//单列表结构的url类型数据列表
+		$scope.typeDataLineList = new Array();
+		//编辑的类型数据列表
+		$scope.editTypeDataList = new Array();
 		
 		
 		
@@ -26,8 +28,10 @@ mainStates["urlTypeTempView"] = {
 				method : "post",
 				params : {}
 			}).then(function(result) {
-				var curDataList = result.data.data || [];
-				$scope.typeDataList = curDataList;
+				var dataList = result.data.data || [];
+				
+				//提取url类型数据列表为单列表结构的
+				$scope.fetchLineTypeDataLine(dataList);
 				
 				//查询url信息列表
 				$scope.search();
@@ -35,6 +39,24 @@ mainStates["urlTypeTempView"] = {
 		}
 		//默认查询一次url类型
 		$scope.searchType();
+		
+		/**
+		 * 提取url类型数据列表为单列表结构的
+		 */
+		$scope.fetchLineTypeDataLine = function(typeDataList) {
+			if(isNotEmpty(typeDataList)) {
+				for (var i = 0; i < typeDataList.length; i++) {
+					var typeData = typeDataList[i];
+					
+					$scope.typeDataLineList.push(typeData);
+					
+					//如果还有子类型列表，则递归处理
+					if (isNotEmpty(typeData.childList)) {
+						$scope.fetchLineTypeDataLine(typeData.childList);
+					}
+				}
+			}
+		}
 		
 		/**
 		 * 查询
@@ -51,36 +73,8 @@ mainStates["urlTypeTempView"] = {
 				for (var i = 0; i < dataList.length; i++) {
 					var data = dataList[i];
 					data.typeList = [];
-					
-					//补充url类型模板的url类型信息
-					$scope.supplementTypeTempInfoForType(data, $scope.typeDataList);
 				}
 			});
-		}
-		
-		/**
-		 * 补充url类型模板的url类型信息
-		 */
-		$scope.supplementTypeTempInfoForType = function(data, typeDataList) {
-			if(isNotEmpty(data.typeIdList) && isNotEmpty(typeDataList)) {
-				for (var i = 0; i < data.typeIdList.length; i++) {
-					var typeId = data.typeIdList[i];
-					
-					for (var j = 0; j < typeDataList.length; j++) {
-						var typeData = typeDataList[j];
-						
-						//如果还有子类型列表，则递归处理
-						if (isNotEmpty(typeData.childList)) {
-							$scope.supplementTypeTempInfoForType(data, typeData.childList);
-						}
-						
-						//有此url类型
-						if (typeId == typeData.id) {
-							data.typeList.push(typeData);
-						}
-					}
-				}
-			}
 		}
 		
 		/**
@@ -91,6 +85,8 @@ mainStates["urlTypeTempView"] = {
 			
 			//重置
 			$scope.editData = {};
+			//初始化编辑的类型数据列表
+			$scope.initEditTypeDataList();
 			
 			$('#editPanel').modal("show");
 		}
@@ -102,6 +98,8 @@ mainStates["urlTypeTempView"] = {
 			$scope.editType = "1";
 			
 			$scope.editData = data;
+			//初始化编辑的类型数据列表
+			$scope.initEditTypeDataList();
 			
 			$('#editPanel').modal("show");
 		}
@@ -184,19 +182,10 @@ mainStates["urlTypeTempView"] = {
 		$scope.fetchEditReq = function() {
 			var editData = $scope.editData;
 			
-			//url类型id
-			var typeIdList = new Array();
-			if (isNotEmpty(editData.typeList)) {
-				for (var i = 0; i < editData.typeList.length; i++) {
-					var typeItem = editData.typeList[i];
-					typeIdList.push(typeItem.id);
-				}
-			}
-			
 			var editReq = {
 				id : editData.id,
 				name : editData.name,
-				typeIdList : typeIdList
+				typeIdList : editData.typeIdList
 			};
 			
 			return editReq;
@@ -237,21 +226,28 @@ mainStates["urlTypeTempView"] = {
 				typeSelectLi : function(typeData) {
 					var editData = $scope.editData;
 					
-					if (isEmpty(editData.typeList)) {
-						editData.typeList = [];
+					if (isEmpty(editData.typeIdList)) {
+						editData.typeIdList = new Array();
 					}
 					
-					for (var i = 0; i < editData.typeList.length; i++) {
-						var typeItem = editData.typeList[i];
+					var isRemove = false;
+					for (var i = 0; i < editData.typeIdList.length; i++) {
+						var typeIdItem = editData.typeIdList[i];
 						//已经存在则去除选择
-						if (typeItem.id == typeData.id) {
-							editData.typeList.splice(i, 1);
-							return;
+						if (typeIdItem == typeData.id) {
+							editData.typeIdList.splice(i, 1);
+							isRemove = true;
+							break;
 						}
 					}
 					
 					//最终不存在，则新增
-					editData.typeList.push(typeData);
+					if (!isRemove) {
+						editData.typeIdList.push(typeData.id);
+					}
+					
+					//初始化编辑的类型数据列表
+					$scope.initEditTypeDataList();
 				},
 				
 				/**
@@ -260,11 +256,11 @@ mainStates["urlTypeTempView"] = {
 				isTypeSelectedLi : function(typeData) {
 					var editData = $scope.editData;
 					
-					if (isNotEmpty(editData.typeList)) {
-						for (var i = 0; i < editData.typeList.length; i++) {
-							var typeItem = editData.typeList[i];
+					if (isNotEmpty(editData.typeIdList)) {
+						for (var i = 0; i < editData.typeIdList.length; i++) {
+							var typeIdItem = editData.typeIdList[i];
 							//存在该类型
-							if (typeItem.id == typeData.id) {
+							if (typeIdItem == typeData.id) {
 								return true;
 							}
 						}
@@ -281,7 +277,10 @@ mainStates["urlTypeTempView"] = {
 		 * url类型移除选择
 		 */
 		$scope.typeRemoveSelectLi = function(typeDataIndex) {
-			$scope.editData.typeList.splice(typeDataIndex, 1);
+			$scope.editData.typeIdList.splice(typeDataIndex, 1);
+			
+			//初始化编辑的类型数据列表
+			$scope.initEditTypeDataList();
 		}
 		
 		/**
@@ -295,6 +294,30 @@ mainStates["urlTypeTempView"] = {
 			}
 			
 			return true;
+		}
+		
+		/**
+		 * 初始化编辑的类型数据列表
+		 */
+		$scope.initEditTypeDataList = function() {
+			var editData = $scope.editData;
+			var typeDataLineList = $scope.typeDataLineList;
+			$scope.editTypeDataList = new Array();
+			
+			if (isNotEmpty(editData.typeIdList)) {
+				for (var i = 0; i < editData.typeIdList.length; i++) {
+					var typeIdItem = editData.typeIdList[i];
+					
+					for (var j = 0; j < typeDataLineList.length; j++) {
+						var typeData = typeDataLineList[j];
+						
+						if (typeIdItem == typeData.id) {
+							$scope.editTypeDataList.push(typeData);
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 }

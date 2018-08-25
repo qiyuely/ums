@@ -36,5 +36,11 @@
 			url_type_temp_id varchar(32) comment 'url类型模板id',
 			url_type_id varchar(32) comment 'url类型id'
 		);
+		
+		<!-- 操作设定历史表 -->
+		create table if not exists t_op_setting_history comment '操作设定历史表' (
+			op_key varchar(80) comment '操作主键' primary key,
+			setting varchar(5000) comment '操作设定'
+		);
 	</insert>
 </mapper>
