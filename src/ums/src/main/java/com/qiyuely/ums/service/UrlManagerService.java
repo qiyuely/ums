@@ -2,11 +2,11 @@ package com.qiyuely.ums.service;
 
 import java.util.List;
 
+import com.qiyuely.ums.dto.url.UrlAllInfoDto;
 import com.qiyuely.ums.dto.url.UrlDto;
 import com.qiyuely.ums.framework.result.Result;
 import com.qiyuely.ums.req.url.UrlCreateReq;
 import com.qiyuely.ums.req.url.UrlDeleteReq;
-import com.qiyuely.ums.req.url.UrlQueryReq;
 import com.qiyuely.ums.req.url.UrlUpdateReq;
 
 /**
@@ -21,7 +21,7 @@ public interface UrlManagerService {
 	 * 查询列表
 	 * @return
 	 */
-	public Result<List<UrlDto>> queryList(UrlQueryReq req);
+	public Result<List<UrlDto>> queryList();
 	
 	/**
 	 * 创建url
@@ -43,4 +43,10 @@ public interface UrlManagerService {
 	 * @return
 	 */
 	public Result<Void> deleteUrl(UrlDeleteReq req);
+	
+	/**
+	 * 查询url相关全部信息
+	 * @return
+	 */
+	public Result<UrlAllInfoDto> queryUrlAllInfo();
 }

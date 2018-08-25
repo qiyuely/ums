@@ -10,16 +10,22 @@ import com.qiyuely.remex.utils.CollectionUtils;
 import com.qiyuely.remex.utils.StringUtils;
 import com.qiyuely.ums.dao.UrlManagerDao;
 import com.qiyuely.ums.dao.UrlTypeRelDao;
+import com.qiyuely.ums.dto.sys.SysOpSettingHistoryDto;
+import com.qiyuely.ums.dto.url.UrlAllInfoDto;
 import com.qiyuely.ums.dto.url.UrlDto;
+import com.qiyuely.ums.dto.url.UrlTypeDto;
+import com.qiyuely.ums.dto.url.UrlTypeTempDto;
 import com.qiyuely.ums.entity.url.UrlEntity;
 import com.qiyuely.ums.entity.url.UrlTypeRelEntity;
 import com.qiyuely.ums.framework.BaseService;
 import com.qiyuely.ums.framework.result.Result;
 import com.qiyuely.ums.req.url.UrlCreateReq;
 import com.qiyuely.ums.req.url.UrlDeleteReq;
-import com.qiyuely.ums.req.url.UrlQueryReq;
 import com.qiyuely.ums.req.url.UrlUpdateReq;
+import com.qiyuely.ums.service.SysOpSettingHistoryService;
 import com.qiyuely.ums.service.UrlManagerService;
+import com.qiyuely.ums.service.UrlTypeService;
+import com.qiyuely.ums.service.UrlTypeTempService;
 import com.qiyuely.ums.utils.IdUtil;
 
 /**
@@ -36,16 +42,25 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	
 	@Autowired
 	private UrlTypeRelDao urlTypeRelDao;
+	
+	@Autowired
+	private UrlTypeService urlTypeService;
+	
+	@Autowired
+	private UrlTypeTempService urlTypeTempService;
+	
+	@Autowired
+	private SysOpSettingHistoryService sysOpSettingHistoryService;
 
 	/**
 	 * 查询列表
 	 * @return
 	 */
 	@Override
-	public Result<List<UrlDto>> queryList(UrlQueryReq req) {
+	public Result<List<UrlDto>> queryList() {
 		List<UrlDto> dtoList = new ArrayList<>();
 		
-		List<UrlEntity> list = urlManagerDao.queryList(req);
+		List<UrlEntity> list = urlManagerDao.queryList();
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (UrlEntity entity : list) {
 				UrlDto dto = new UrlDto();
@@ -139,6 +154,35 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 				
 		return packResult();
 	}
+	
+	/**
+	 * 查询url相关全部信息
+	 * @return
+	 */
+	@Override
+	public Result<UrlAllInfoDto> queryUrlAllInfo() {
+		UrlAllInfoDto dto = new UrlAllInfoDto();
+		
+		//url类型列表
+		List<UrlTypeDto> typeList = urlTypeService.queryUrlTypeInfo().getData();
+		dto.setTypeList(typeList);
+		
+		//url类型模板列表
+		List<UrlTypeTempDto> typeTempList = urlTypeTempService.queryUrlTypeTempInfo().getData();
+		dto.setTypeTempList(typeTempList);
+		
+		//操作设定信息列表
+		List<SysOpSettingHistoryDto> opSettingHistoryList = sysOpSettingHistoryService.queryOpSettingHistoryList().getData();
+		dto.setOpSettingHistoryList(opSettingHistoryList);
+		
+		//url信息列表
+		List<UrlDto> urlList = queryList().getData();
+		dto.setUrlList(urlList);
+		
+		return packResult(dto);
+	}
+	
+	
 	
 	
 	

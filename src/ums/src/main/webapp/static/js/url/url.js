@@ -36,31 +36,61 @@ mainStates["urlView"] = {
 		urlTypeSelectModule.build($scope, $http);
 		
 		/**
-		 * 查询url类型
+		 * 查询url相关全部信息
 		 */
-		$scope.searchType = function() {
+		$scope.searchAllInfo = function() {
 			$http({
-				url : "/url/type/queryUrlTypeInfo",
+				url : "/url/queryUrlAllInfo",
 				method : "post",
 				params : {}
 			}).then(function(result) {
-				var dataList = result.data.data || new Array();
+				var urlAllInfo = result.data.data || new Array();
+				//url信息列表
+				var	urlList = urlAllInfo.urlList ||  new Array();
+				//url类型列表
+				var typeList = urlAllInfo.typeList ||  new Array();
+				//url类型模板列表
+				var typeTempList = urlAllInfo.typeTempList ||  new Array();
+				//操作设定信息列表
+				var	opSettingHistoryList = urlAllInfo.opSettingHistoryList ||  new Array();
+				
+				$scope.dataList = urlList;
 				
 				//提取url类型数据列表为单列表结构的
-				$scope.fetchLineTypeDataLine(dataList);
+				$scope.fetchLineTypeDataLine(typeList);
 				
-				//查询url类型模板
-				$scope.searchTypeTemp();
+				//默认类型模板
+				var defaultTypeTempData = {
+					id : "DEFAULT_TEMP",
+					name : "默  认",
+					active : 1,
+					typeIdList : new Array(),
+					typeIdEnabledList : new Array()
+				}
+				$scope.typeTempDataList.push(defaultTypeTempData);
 				
-				//查询url信息列表
-				$scope.search();
+				for (var i = 0; i < typeTempList.length; i++) {
+					var typeTempData = typeTempList[i];
+					typeTempData.active = 0;
+					
+					//可用类型id列表
+					typeTempData.typeIdEnabledList = new Array();
+					for (var k = 0; k < typeTempData.typeIdList.length; k++) {
+						var typeId = typeTempData.typeIdList[k];
+						typeTempData.typeIdEnabledList.push(typeId);
+					}
+					
+					$scope.typeTempDataList.push(typeTempData);
+				}
+				
+				$scope.sysOpSettingHistoryList = opSettingHistoryList;
 				
 				//初始化操作设定
 				$scope.initSysOpSettingHistory();
 			});
 		}
-		//默认查询一次url类型
-		$scope.searchType();
+		//默认查询url相关全部信息
+		$scope.searchAllInfo();
 		
 		/**
 		 * 提取url类型数据列表为单列表结构的
@@ -78,70 +108,6 @@ mainStates["urlView"] = {
 					}
 				}
 			}
-		}
-		
-		/**
-		 * 查询url类型模板
-		 */
-		$scope.searchTypeTemp = function() {
-			$http({
-				url : "/url/typeTemp/queryUrlTypeTempInfo",
-				method : "post",
-				params : {}
-			}).then(function(result) {
-				var dataList = result.data.data || new Array();
-				
-				//默认类型模板
-				var defaultTypeTempData = {
-					id : "DEFAULT_TEMP",
-					name : "默  认",
-					active : 1,
-					typeIdList : new Array(),
-					typeIdEnabledList : new Array()
-				}
-				$scope.typeTempDataList.push(defaultTypeTempData);
-				
-				for (var i = 0; i < dataList.length; i++) {
-					var data = dataList[i];
-					data.active = 0;
-					
-					//可用类型id列表
-					data.typeIdEnabledList = new Array();
-					if (isNotEmpty(data.typeIdList)) {
-						for (var k = 0; k < data.typeIdList.length; k++) {
-							var typeId = data.typeIdList[k];
-							data.typeIdEnabledList.push(typeId);
-						}
-					}
-					
-					$scope.typeTempDataList.push(data);
-				}
-				
-				//初始化操作设定
-				$scope.initSysOpSettingHistory();
-			});
-		};
-		
-		/**
-		 * 查询
-		 */
-		$scope.search = function() {
-			$http({
-				url : "/url/queryList",
-				method : "post",
-				params : {}
-			}).then(function(result) {
-				var dataList = result.data.data || [];
-				$scope.dataList = dataList;
-				
-				for (var i = 0; i < dataList.length; i++) {
-					var data = dataList[i];
-					data.typeList = new Array();
-				}
-				
-				//初始化操作设定
-				$scope.initSysOpSettingHistory();
-			});
 		}
 		
 		/**
@@ -426,7 +392,6 @@ mainStates["urlView"] = {
 					
 					//如果是默认模板，则保存下操作设定的类型id
 					if ("DEFAULT_TEMP" == typeTempData.id) {
-						console.log(typeTempData.typeIdList.join(","));
 						$scope.updateSysOpSetting(sysOpSettingKey.defaultTypeTempForTypeIdList, typeTempData.typeIdList.join(","));
 					}
 				},
@@ -521,7 +486,8 @@ mainStates["urlView"] = {
 		/**
 		 * 选择某个url类型模板
 		 */
-		$scope.typeTempSelect = function(typeTempData) {
+		$scope.typeTempSelect = function(typeTempData, useSysOpSetting) {
+			useSysOpSetting = useSysOpSetting || false;
 			$scope.typeTempDataSelected = typeTempData;
 			$scope.typeTempSelectTypeDataList = new Array();
 			var typeDataLineList = $scope.typeDataLineList;
@@ -554,14 +520,16 @@ mainStates["urlView"] = {
 				}
 			}
 			
-			//过滤出url信息列表
-			$scope.filterUrlInfoListHandle();
-			
-			//修改操作设定
-			$scope.updateSysOpSetting(sysOpSettingKey.typeTempIdSelected, typeTempData.id);
-			
-			//修改操作设定
-			$scope.updateSysOpSetting(sysOpSettingKey.typeTempTypeIdEnabledList, $scope.fetchEnabledTypeIdListBySysOpSetting());
+			if (!useSysOpSetting) {
+				//过滤出url信息列表
+				$scope.filterUrlInfoListHandle();
+				
+				//修改操作设定
+				$scope.updateSysOpSetting(sysOpSettingKey.typeTempIdSelected, typeTempData.id);
+				
+				//修改操作设定
+				$scope.updateSysOpSetting(sysOpSettingKey.typeTempTypeIdEnabledList, $scope.fetchEnabledTypeIdListBySysOpSetting());
+			}
 		}
 		
 		/**
@@ -676,25 +644,6 @@ mainStates["urlView"] = {
 		}
 		
 		/**
-		 * 查询操作设定历史
-		 */
-		$scope.searchSysOpSettingHistory = function() {
-			$http({
-				url : "/sys/opSettingHistory/queryOpSettingHistoryList",
-				method : "post",
-				params : {}
-			}).then(function(result) {
-				var dataList = result.data.data || new Array();
-				
-				$scope.sysOpSettingHistoryList = dataList;
-				
-				//初始化操作设定
-				$scope.initSysOpSettingHistory();
-			});
-		}
-		$scope.searchSysOpSettingHistory();
-		
-		/**
 		 * 初始化操作设定
 		 */
 		$scope.initSysOpSettingHistory = function() {
@@ -703,6 +652,51 @@ mainStates["urlView"] = {
 			}
 			var sysOpSettingHistoryList = $scope.sysOpSettingHistoryList;
 			var typeTempDataList = $scope.typeTempDataList;
+			
+			for (var i = 0; i < sysOpSettingHistoryList.length; i++) {
+				var sysOpSetting = sysOpSettingHistoryList[i];
+				
+				//默认模板已选择的类型id
+				if (sysOpSettingKey.defaultTypeTempForTypeIdList == sysOpSetting.opKey) {
+					for (var j = 0; j < typeTempDataList.length; j++) {
+						var typeTempData = typeTempDataList[j];
+						//如果是默认模板，则取出操作设定的类型id
+						if ("DEFAULT_TEMP" == typeTempData.id) {
+							var typeIdList = sysOpSetting.setting.split(",");
+							typeTempData.typeIdList = typeIdList;
+						}
+					}
+					
+					break;
+				}
+			}
+			
+			for (var i = 0; i < sysOpSettingHistoryList.length; i++) {
+				var sysOpSetting = sysOpSettingHistoryList[i];
+				
+				//已选择的类型模板中的可用类型id
+				if (sysOpSettingKey.typeTempTypeIdEnabledList == sysOpSetting.opKey) {
+					if (isNotEmpty(typeTempDataList)) {
+						var typeIdEnabledListGroupArr = sysOpSetting.setting.split(";");
+						
+						for (var k = 0; k < typeIdEnabledListGroupArr.length; k++) {
+							var typeIdEnabledList = typeIdEnabledListGroupArr[k].split(",");
+							
+							for (var j = 0; j < typeTempDataList.length; j++) {
+								var typeTempData = typeTempDataList[j];
+								
+								if (typeIdEnabledList[0] == typeTempData.id) {
+									typeIdEnabledList.splice(0, 1);
+									typeTempData.typeIdEnabledList = typeIdEnabledList;
+								}
+							}
+						}
+						
+					}
+				}
+			}
+			
+			
 			
 			var matchTempIndex = -1;
 			for (var i = 0; i < sysOpSettingHistoryList.length; i++) {
@@ -732,7 +726,7 @@ mainStates["urlView"] = {
 							var typeTempData = typeTempDataList[j];
 							
 							if (typeTempIdSelected == typeTempData.id) {
-								$scope.typeTempSelect(typeTempData);
+								$scope.typeTempSelect(typeTempData, false);
 								matchTempIndex = j;
 								break;
 							}
@@ -750,40 +744,6 @@ mainStates["urlView"] = {
 							}
 						}
 					}
-				}
-				
-				//已选择的类型模板中的可用类型id
-				if (sysOpSettingKey.typeTempTypeIdEnabledList == sysOpSetting.opKey) {
-					if (isNotEmpty(typeTempDataList)) {
-						var typeIdEnabledListGroupArr = sysOpSetting.setting.split(";");
-						
-						for (var k = 0; k < typeIdEnabledListGroupArr.length; k++) {
-							var typeIdEnabledList = typeIdEnabledListGroupArr[k].split(",");
-							
-							for (var j = 0; j < typeTempDataList.length; j++) {
-								var typeTempData = typeTempDataList[j];
-								
-								if (typeIdEnabledList[0] == typeTempData.id) {
-									typeIdEnabledList.splice(0, 1);
-									typeTempData.typeIdEnabledList = typeIdEnabledList;
-								}
-							}
-						}
-						
-					}
-				}
-				
-				//已选择的类型模板中的可用类型id
-				if (sysOpSettingKey.defaultTypeTempForTypeIdList == sysOpSetting.opKey) {
-					for (var j = 0; j < typeTempDataList.length; j++) {
-						var typeTempData = typeTempDataList[j];
-						//如果是默认模板，则取出操作设定的类型id
-						if ("DEFAULT_TEMP" == typeTempData.id) {
-							var typeIdList = sysOpSetting.setting.split(",");
-							typeTempData.typeIdList = typeIdList
-						}
-					}
-					
 				}
 			}
 			
