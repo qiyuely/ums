@@ -2,7 +2,7 @@
 
 title ums build
 
-cd ../src/ums/
+cd ums
 call mvn clean install
 
 @pause
