@@ -67,10 +67,10 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	@Transactional
 	@Override
 	public Result<UrlTypeDto> createUrlType(UrlTypeCreateReq req) {
-		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
-		if (entityByName != null) {
-			return errorResult("该父节点下已存在同名的节点");
-		}
+//		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
+//		if (entityByName != null) {
+//			return errorResult("该父节点下已存在同名的节点");
+//		}
 		
 		UrlTypeEntity entity = new UrlTypeEntity();
 		entity.setId(IdUtil.createId());
@@ -92,10 +92,10 @@ public class UrlTypeServiceImpl extends BaseService implements UrlTypeService {
 	@Transactional
 	@Override
 	public Result<Void> updateUrlType(UrlTypeUpdateReq req) {
-		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
-		if (entityByName != null && !req.getId().equals(entityByName.getId())) {
-			return errorResult("该父节点下已存在同名的节点");
-		}
+//		UrlTypeEntity entityByName = urlTypeDao.findByName(req.getName());
+//		if (entityByName != null && !req.getId().equals(entityByName.getId())) {
+//			return errorResult("该父节点下已存在同名的节点");
+//		}
 		
 		UrlTypeEntity entity = new UrlTypeEntity();
 		entity.setId(req.getId());
