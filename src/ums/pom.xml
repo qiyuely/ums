@@ -5,6 +5,8 @@
   <version>0.0.1-SNAPSHOT</version>
   
   <properties>
+  	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<encoding>UTF-8</encoding>
   	<remex.version>0.0.1-SNAPSHOT</remex.version>
   	<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
   </properties>
@@ -49,7 +51,22 @@
     </dependency>
   </dependencies>
   
+  <distributionManagement>
+	<snapshotRepository>
+		<id>tms-snapshot</id>
+		<name>tms-snapshot</name>
+		<url>http://10.10.1.30:8081/repository/maven-snapshots/</url>
+	</snapshotRepository>
+	<repository>
+		<id>tms-releases</id>
+		<name>tms-releases</name>
+		<url>http://10.10.1.30:8081/repository/maven-releases/</url>
+	</repository>
+  </distributionManagement>
+  
   <build>
+  	<finalName>${artifactId}</finalName>
+  	
   	<plugins>
   		<plugin>
   			<groupId>org.springframework.boot</groupId>
@@ -63,6 +80,29 @@
 		    	</execution>
 		    </executions>
   		</plugin>
+  		
+  		<plugin>
+	        <artifactId>maven-antrun-plugin</artifactId>
+	        <executions>
+	            <execution>
+	                <id>copy</id>
+	                <phase>package</phase>
+	                <configuration>
+	                    <tasks>
+	                        <copy todir="../../app/jar/${artifactId}">
+	                            <fileset dir="${project.build.directory}">
+	                                <include name="*.jar" />
+	                            </fileset>
+	                        </copy>
+	                    </tasks>
+	                </configuration>
+	                <goals>
+	                    <goal>run</goal>
+	                </goals>
+	            </execution>
+	        </executions>
+	    </plugin>
+	    
   	</plugins>
   	
   	<resources>
