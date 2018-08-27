@@ -95,16 +95,26 @@ mainStates["urlView"] = {
 		/**
 		 * 提取url类型数据列表为单列表结构的
 		 */
-		$scope.fetchLineTypeDataLine = function(typeDataList) {
+		$scope.fetchLineTypeDataLine = function(typeDataList, parentFullName) {
+			console.log(fullName);
+			
 			if(isNotEmpty(typeDataList)) {
 				for (var i = 0; i < typeDataList.length; i++) {
 					var typeData = typeDataList[i];
+					
+					//全称
+					var fullName = parentFullName || "";
+					if (isNotEmpty(fullName)) {
+						fullName += ".";
+					}
+					fullName += typeData.name;
+					typeData.fullName = fullName;
 					
 					$scope.typeDataLineList.push(typeData);
 					
 					//如果还有子类型列表，则递归处理
 					if (isNotEmpty(typeData.childList)) {
-						$scope.fetchLineTypeDataLine(typeData.childList);
+						$scope.fetchLineTypeDataLine(typeData.childList, fullName);
 					}
 				}
 			}

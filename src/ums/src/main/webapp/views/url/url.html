@@ -36,7 +36,7 @@
 										<button ng-click="$evalAsync(typeTempSelectType(typeData, $event))" ng-dblclick="typeTempSelectSingleType(typeData)" 
 											ng-repeat="typeData in typeTempSelectTypeDataList" 
 											class="btn btn-{{typeData.enabledForTypeTemp == 0 ? 'grey' : 'primary'}} btn-sm">
-											{{typeData.name}}
+											{{typeData.fullName}}
 										</button>
 										
 										<h3 class="row header smaller lighter grey"></h3>
