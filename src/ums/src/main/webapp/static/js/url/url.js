@@ -2,7 +2,7 @@
 
 mainStates["urlView"] = {
 	templateUrl : "/url/toView",
-	controller : function($scope, $http) {
+	controller : function($scope, $http, $timeout) {
 		
 		//数据列表
 		$scope.dataList = new Array();
@@ -455,7 +455,19 @@ mainStates["urlView"] = {
 		/**
 		 * 模板选择url类型板
 		 */
-		$scope.typeTempSelectType = function(typeData) {
+		$scope.typeTempSelectType = function(typeData, $event) {
+			//避免双击触发两次单击事件
+			if (typeData.typeTempSelectTypeClicked) {
+				typeData.typeTempSelectTypeClicked = true;
+				return;
+			}
+			
+			typeData.typeTempSelectTypeClicked = true;
+			
+			$timeout(function () {
+				typeData.typeTempSelectTypeClicked = false;
+			}, 500);
+			
 			var newEnabledForTypeTemp = typeData.enabledForTypeTemp == 1 ? 0 : 1;
 			typeData.enabledForTypeTemp = newEnabledForTypeTemp;
 			var typeTempData = $scope.typeTempDataSelected;
@@ -490,7 +502,32 @@ mainStates["urlView"] = {
 		 * 模板选择单个url类型
 		 */
 		$scope.typeTempSelectSingleType = function(typeData) {
+			var typeTempData = $scope.typeTempDataSelected;
+			var typeDataSelectList = $scope.typeTempSelectTypeDataList ;
 			
+			for (var k = 0; k < typeTempData.typeIdEnabledList.length; k++) {
+				var typeIdEnabled = typeTempData.typeIdEnabledList[k];
+				//双击时，此类型节点不做处理，其它全部置为不可用
+				if (typeData.id != typeIdEnabled) {
+					typeTempData.typeIdEnabledList.splice(k, 1);
+					k--;
+					continue;
+				}
+			}
+			
+			for (var i = 0; i < typeDataSelectList.length; i++) {
+				var typeDataSelect = typeDataSelectList[i];
+				//双击时，此类型节点不做处理，其它全部置为不可用
+				if (typeData.id != typeDataSelect.id) {
+					typeDataSelect.enabledForTypeTemp = 0;
+				}
+			}
+			
+			//过滤出url信息列表
+			$scope.filterUrlInfoListHandle();
+			
+			//修改操作设定
+			$scope.updateSysOpSetting(sysOpSettingKey.typeTempTypeIdEnabledList, $scope.fetchEnabledTypeIdListBySysOpSetting());
 		}
 		
 		/**

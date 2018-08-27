@@ -33,7 +33,7 @@
 							<div class="tab-content no-border padding-24" style="padding : 24px 0px;">
 								<div id="#typeTempArea" class="tab-pane in active">
 									<div ng-show="isTypeTempShowArea == 1" class="type-temp-btns">
-										<button ng-click="$evalAsync(typeTempSelectType(typeData))" ng-dblclick="typeTempSelectSingleType(typeData)" 
+										<button ng-click="$evalAsync(typeTempSelectType(typeData, $event))" ng-dblclick="typeTempSelectSingleType(typeData)" 
 											ng-repeat="typeData in typeTempSelectTypeDataList" 
 											class="btn btn-{{typeData.enabledForTypeTemp == 0 ? 'grey' : 'primary'}} btn-sm">
 											{{typeData.name}}
