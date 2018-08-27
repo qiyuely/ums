@@ -1,6 +1,8 @@
 @echo off
 
-cd ../src/ums/
-mvn clean install
+title ums build
 
-pause
+cd ../src/ums/
+call mvn clean install
+
+@pause
