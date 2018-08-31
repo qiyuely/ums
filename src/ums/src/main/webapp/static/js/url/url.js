@@ -505,22 +505,32 @@ mainStates["urlView"] = {
 			var typeTempData = $scope.typeTempDataSelected;
 			var typeDataSelectList = $scope.typeTempSelectTypeDataList ;
 			
-			for (var k = 0; k < typeTempData.typeIdEnabledList.length; k++) {
-				var typeIdEnabled = typeTempData.typeIdEnabledList[k];
-				//双击时，此类型节点不做处理，其它全部置为不可用
-				if (typeData.id != typeIdEnabled) {
-					typeTempData.typeIdEnabledList.splice(k, 1);
-					k--;
-					continue;
-				}
-			}
+//			for (var k = 0; k < typeTempData.typeIdEnabledList.length; k++) {
+//				var typeIdEnabled = typeTempData.typeIdEnabledList[k];
+//				//双击时，此类型节点不做处理，其它全部置为不可用
+//				if (typeData.id != typeIdEnabled) {
+//					typeTempData.typeIdEnabledList.splice(k, 1);
+//					k--;
+//					continue;
+//				}
+//			}
 			
 			for (var i = 0; i < typeDataSelectList.length; i++) {
 				var typeDataSelect = typeDataSelectList[i];
-				//双击时，此类型节点不做处理，其它全部置为不可用
-				if (typeData.id != typeDataSelect.id) {
-					typeDataSelect.enabledForTypeTemp = 0;
-				}
+					//双击时，此类型节点不做处理，其它同级别节点全部置为不可用
+					if (typeData.parentId == typeDataSelect.parentId && typeData.id != typeDataSelect.id) {
+						typeDataSelect.enabledForTypeTemp = 0;
+						
+						for (var k = 0; k < typeTempData.typeIdEnabledList.length; k++) {
+							var typeIdEnabled = typeTempData.typeIdEnabledList[k];
+							if (typeDataSelect.id == typeIdEnabled) {
+								typeTempData.typeIdEnabledList.splice(k, 1);
+								k--;
+								break;
+							}
+						}
+					}
+				
 			}
 			
 			//过滤出url信息列表
