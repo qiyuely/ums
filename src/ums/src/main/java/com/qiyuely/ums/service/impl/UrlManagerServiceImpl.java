@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.qiyuely.remex.utils.CollectionUtils;
+import com.qiyuely.remex.utils.DateUtils;
 import com.qiyuely.remex.utils.StringUtils;
 import com.qiyuely.ums.dao.UrlManagerDao;
 import com.qiyuely.ums.dao.UrlTypeRelDao;
@@ -86,10 +87,7 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 	@Override
 	public Result<UrlDto> createUrl(UrlCreateReq req) {
 		UrlEntity entity = new UrlEntity();
-		entity.setId(IdUtil.createId());
-		entity.setName(req.getName());
-		entity.setUrl(req.getUrl());
-		entity.setRemark(req.getRemark());
+		fillCreate(entity, req);
 		
 		urlManagerDao.insert(entity);
 		
@@ -201,7 +199,19 @@ public class UrlManagerServiceImpl extends BaseService implements UrlManagerServ
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
 		dto.setUrl(entity.getUrl());
+		dto.setCreateTime(entity.getCreateTime());
 		dto.setRemark(entity.getRemark());
+	}
+	
+	/**
+	 * 填充创建数据
+	 */
+	private void fillCreate(UrlEntity entity, UrlCreateReq req) {
+		entity.setId(IdUtil.createId());
+		entity.setName(req.getName());
+		entity.setUrl(req.getUrl());
+		entity.setCreateTime(DateUtils.getCurTimestamp());
+		entity.setRemark(req.getRemark());
 	}
 	
 	/**

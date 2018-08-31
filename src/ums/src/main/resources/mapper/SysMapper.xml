@@ -10,6 +10,7 @@
 			id varchar(32) comment 'id' primary key,
 			name varchar(50) comment '类型名称',
 			url varchar(255) comment 'url',
+			create_time timestamp comment '创建时间',
 			remark varchar(500) comment '备注'
 		);
 		

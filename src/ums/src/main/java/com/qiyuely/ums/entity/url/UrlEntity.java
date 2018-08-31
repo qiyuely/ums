@@ -1,5 +1,7 @@
 package com.qiyuely.ums.entity.url;
 
+import java.sql.Timestamp;
+
 /**
  * url entity
  * 
@@ -16,6 +18,9 @@ public class UrlEntity {
 	
 	/** url */
 	private String url;
+	
+	/** 创建时间 */
+	private Timestamp createTime;
 	
 	/** 备注 */
 	private String remark;
@@ -50,5 +55,13 @@ public class UrlEntity {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
+	}
+	
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 }

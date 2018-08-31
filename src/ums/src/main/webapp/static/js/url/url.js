@@ -670,13 +670,15 @@ mainStates["urlView"] = {
 					
 					label:
 					if (isNotEmpty(typeTempSelectTypeDataList)) {
-						var isMatch = false;
+						var isMatch = true;
 						
 						for (var j = 0; j < typeTempSelectTypeDataList.length; j++) {
 							var typeData = typeTempSelectTypeDataList[j];
 							if (!typeData.enabledForTypeTemp == 1) {
 								continue;
 							}
+							
+							isMatch = false;
 							
 							for (var k = 0; k < urlData.typeIdList.length; k++) {
 								var typeIdItem = urlData.typeIdList[k];

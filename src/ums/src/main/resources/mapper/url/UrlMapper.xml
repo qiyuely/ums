@@ -8,7 +8,7 @@
 	
 	<!-- 表所有字段 -->
 	<sql id="allColumns">
-		id, name, url, remark
+		id, name, url, create_time, remark
 	</sql>
 	
 	<!-- 插入 -->
@@ -18,6 +18,7 @@
 			#{id},
 			#{name},
             #{url},
+            #{createTime},
             #{remark}
 		)
 	</insert>
@@ -25,6 +26,7 @@
 	<!-- 查询列表 -->
 	<select id="queryList" resultMap="BaseMap" parameterType="com.qiyuely.ums.req.url.UrlQueryReq">
 		select <include refid="allColumns"/> from t_url
+		order by create_time desc
 	</select>
 	
 	<!-- 修改 -->

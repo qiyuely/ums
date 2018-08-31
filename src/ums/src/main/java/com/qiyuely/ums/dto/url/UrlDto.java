@@ -1,6 +1,7 @@
 package com.qiyuely.ums.dto.url;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -19,6 +20,9 @@ public class UrlDto implements Serializable {
 
 	/** url */
 	private String url;
+	
+	/** 创建时间 */
+	private Timestamp createTime;
 	
 	/** 备注 */
 	private String remark;
@@ -68,5 +72,13 @@ public class UrlDto implements Serializable {
 	
 	public String getName() {
 		return name;
+	}
+	
+	public void setCreateTime(Timestamp createTime) {
+		this.createTime = createTime;
+	}
+	
+	public Timestamp getCreateTime() {
+		return createTime;
 	}
 }
